@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CrossFit Pro - Cloud Cyber Edition</title>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASuX24x3WiK_LGtWqEfZM8btW1esVIX1Q",
+            authDomain: "crossfitpro-2f642.firebaseapp.com",
+            databaseURL: "https://crossfitpro-2f642-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "crossfitpro-2f642",
+            storageBucket: "crossfitpro-2f642.firebasestorage.app",
+            messagingSenderId: "14963097226",
+            appId: "1:14963097226:web:18c6fa24a7e06eef857773",
+            measurementId: "G-H3Q4NJEP53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        window.auth = auth; window.db = db;
+        window.signIn = (e, p) => signInWithEmailAndPassword(auth, e, p);
+        window.signUp = (e, p) => createUserWithEmailAndPassword(auth, e, p);
+        window.logout = () => signOut(auth);
+        window.dbRef = ref; window.dbSet = set; window.dbPush = push; window.dbOnValue = onValue; window.dbRemove = remove; window.dbGet = get;
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #00ff9f;
+            --bg-black: #050505;
+            --card-bg: rgba(20, 20, 25, 0.9);
+            --text-main: #e0e0e0;
+        }
+
+	/* Impedisce il ridimensionamento manuale e fissa la larghezza */
+	textarea { 
+    		resize: none; 
+    		overflow: hidden; 
+    		min-height: 50px; 
+    		width: 100%; 
+    		box-sizing: border-box;
+    		display: block;
+	}
+
+	#plan-page textarea {
+    		resize: none !important:
+    		overflow: hidden !important; 
+    		width: 100% !important;
+    		display: block;
+		min-height: 50px;
+	}
+
+        body { 
+            font-family: 'Orbitron', sans-serif; background: var(--bg-black); color: var(--text-main); 
+            margin: 0; padding-top: 90px; overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%);
+        }
+
+        #login-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: var(--bg-black);
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .login-card { background: var(--card-bg); padding: 30px; border: 1px solid var(--neon-blue); box-shadow: 0 0 20px var(--neon-blue); width: 85%; max-width: 350px; }
+
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 75px; background: rgba(5, 5, 5, 0.95);
+            border-bottom: 2px solid var(--neon-blue); display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+        }
+        .nav-item { color: #666; font-size: 0.65em; cursor: pointer; text-align: center; text-transform: uppercase; font-weight: bold; }
+        .nav-item.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+
+        .container { max-width: 500px; margin: auto; padding: 0 20px; display: none; box-sizing: border-box; }
+        .page { display: none; animation: slideIn 0.4s ease-out; }
+        .page.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .card { 
+            background: var(--card-bg); padding: 20px; border-radius: 4px; margin-bottom: 20px;
+            border-left: 4px solid var(--neon-blue); box-shadow: 0 0 15px rgba(0,0,0,0.5); box-sizing: border-box;
+        }
+
+        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: 'Orbitron'; }
+        
+        .btn { width: 100%; padding: 16px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; margin-bottom: 5px; }
+        .btn-blue { background: #0055ff; color: white; box-shadow: 0 0 10px rgba(0,85,255,0.4); }
+        .btn-red { background: #ff0055; color: white; box-shadow: 0 0 10px rgba(255,0,85,0.4); }
+        .btn-green { background: #00cc88; color: white; }
+
+        .tab-group { display: flex; background: #000; padding: 5px; margin-bottom: 20px; border: 1px solid #333; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #555; cursor: pointer; font-size: 0.75em; font-weight: bold; }
+        .tab-btn.active.forza-style { color: white; border-bottom: 2px solid var(--neon-pink); background: rgba(255,0,255,0.1); }
+        .tab-btn.active.wod-style { color: white; border-bottom: 2px solid var(--neon-blue); background: rgba(0,242,255,0.1); }
+
+        .whiteboard { background: #111; color: var(--neon-blue); padding: 15px; border: 1px solid var(--neon-blue); margin-bottom: 20px; font-size: 0.9em; white-space: pre-wrap; word-space: break-word; line-lenght: 1.4;}
+        .log-entry { background: rgba(255,255,255,0.03); padding: 15px; margin-top: 10px; border: 1px solid #222; position: relative; }
+        .btn-del { position: absolute; top: 10px; right: 10px; color: var(--neon-pink); background: none; border: none; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2 style="color:var(--neon-blue); text-align:center;">SYSTEM_ACCESS</h2>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button class="btn btn-blue" onclick="handleLogin()">LOGIN</button>
+            <button class="btn btn-green" onclick="handleSignUp()" style="margin-top:10px; font-size:0.7em;">REGISTRATI</button>
+            <p id="login-error" style="color:red; font-size:0.7em; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <nav class="navbar" id="main-nav" style="display:none;">
+        <div class="nav-item active" onclick="showPage('plan-page', this)">📋 PROG.</div>
+        <div class="nav-item" onclick="showPage('log-page', this)">🏋️ DIARIO</div>
+        <div class="nav-item" onclick="showPage('meal-page', this)">🍎 PASTI</div>
+        <div class="nav-item" onclick="showPage('stats-page', this)">📈 STATS</div>
+        <div class="nav-item" onclick="window.logout()">🚪 ESCI</div>
+    </nav>
+
+    <div class="container" id="app-container">
+        <div id="plan-page" class="page active">
+            <h2>📋 Lavagna</h2>
+            <input type="date" id="datePlan" onchange="syncDates(this.value)">
+            <div id="activePlanDisplay"></div>
+            <div class="card">
+                <textarea id="warmup" rows="2" placeholder="Warm-up" oninput="autoResize(this)"></textarea>
+                <textarea id="strength" rows="2" placeholder="Forza / Skill" oninput="autoResize(this)"></textarea>
+                <textarea id="gymnastics" rows="2" placeholder="Ginnastica" oninput="autoResize(this)"></textarea>
+                <textarea id="mainWod" rows="3" placeholder="WOD" oninput="autoResize(this)"></textarea>
+                <button class="btn btn-blue" onclick="savePlan()">Aggiorna Lavagna</button>
+            </div>
+        </div>
+
+        <div id="log-page" class="page">
+            <h2>🏋️ Diario Allenamento</h2>
+            <input type="date" id="dateLog" onchange="syncDates(this.value)">
+            <div class="tab-group">
+                <button class="tab-btn active forza-style" onclick="switchInnerTab('inner-forza', this)">FORZA / SKILL</button>
+                <button class="tab-btn wod-style" onclick="switchInnerTab('inner-wod', this)">SCORE WOD</button>
+            </div>
+            <div id="inner-forza" class="inner-tab">
+                <div class="card">
+                    <select id="nameForza">
+                        <option value="">-- Seleziona Esercizio --</option>
+                        <option value="Back squat (rack)">Back squat (rack)</option>
+                        <option value="Clean and jerk">Clean and jerk</option>
+                        <option value="Deadlift">Deadlift</option>
+                        <option value="Front squat (rack)">Front squat (rack)</option>
+                        <option value="Power clean">Power clean</option>
+                        <option value="Power snatch">Power snatch</option>
+                        <option value="Thruster">Thruster</option>
+                    </select>
+                    <input type="number" id="valForza" placeholder="Peso (kg)" inputmode="decimal">
+                    <textarea id="noteForza" rows="2" placeholder="Note Forza..."></textarea>
+                    <button class="btn btn-red" onclick="saveEntry('forza')">Salva Forza</button>
+                </div>
+            </div>
+            <div id="inner-wod" class="inner-tab" style="display:none;">
+                <div class="card" style="border-left-color: var(--neon-blue);">
+                    <input type="text" id="wodName" placeholder="Nome WOD">
+                    <input type="text" id="wodRes" placeholder="Risultato (Tempo/Round)">
+                    <textarea id="wodNote" rows="2" placeholder="Note WOD..."></textarea>
+                    <button class="btn btn-blue" onclick="saveEntry('wod')">Salva Risultato WOD</button>
+                </div>
+            </div>
+            <div id="historyDisplay"></div>
+        </div>
+
+        <div id="meal-page" class="page">
+            <h2>🍎 Diario Pasti</h2>
+            <input type="date" id="dateMeal" onchange="syncDates(this.value)">
+            <div class="card" style="border-left-color: var(--neon-green);">
+                <input type="text" id="foodName" placeholder="Alimento">
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="foodWeight" placeholder="Grammi">
+                    <input type="number" id="foodCal100" placeholder="Cal/100g">
+                </div>
+                <button class="btn btn-green" onclick="addFoodLocal()">+ AGGIUNGI</button>
+                <div id="temp-meal-summary" style="margin-top:10px; font-size:0.8em; color:var(--neon-green);"></div>
+                <button class="btn btn-blue" onclick="saveMealCloud()">SALVA PASTO COMPLETO</button>
+            </div>
+            <div id="mealsHistoryDisplay"></div>
+        </div>
+
+        <div id="stats-page" class="page">
+            <h2>📈 Statistiche</h2>
+            <div class="card">
+                <select id="exSelect" onchange="initStatsListener()"></select>
+                <canvas id="statsChart"></canvas>
+            </div>
+            <div class="card" style="border-left-color: var(--neon-pink);">
+                <h3 style="color:var(--neon-pink); font-size:0.8em; margin-top:0;">REPORT & EXPORT</h3>
+                <button class="btn btn-blue" onclick="exportCSV()">REPORT EXCEL (CSV)</button>
+                <button class="btn btn-red" onclick="exportHTML()">REPORT STORICO (HTML)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let tempItems = [];
+        let myChart = null;
+
+	function autoResize(textarea) {
+    		// Reset dell'altezza per calcolare correttamente lo scrollHeight
+    		textarea.style.height = 'auto';
+    		// Imposta l'altezza in base al contenuto
+    		textarea.style.height = textarea.scrollHeight + 'px';
+	}
+
+        // AUTH INITIALIZATION
+        setTimeout(() => {
+            window.auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'block';
+                    document.getElementById('main-nav').style.display = 'flex';
+                    syncDates(new Date().toISOString().split('T')[0]);
+                    populateExSelect();
+                } else {
+                    document.getElementById('login-overlay').style.display = 'flex';
+                    document.getElementById('app-container').style.display = 'none';
+                    document.getElementById('main-nav').style.display = 'none';
+                }
+            });
+        }, 1000);
+
+        async function handleLogin() {
+            const e = document.getElementById('login-email').value;
+            const p = document.getElementById('login-pass').value;
+            try { await window.signIn(e, p); } catch(err) { document.getElementById('login-error').innerText = "Errore login."; }
+        }
+
+        async function handleSignUp() {
+            const e = document.getElementById('login-email').value;
+            const p = document.getElementById('login-pass').value;
+            try { await window.signUp(e, p); alert("Account creato!"); } catch(err) { document.getElementById('login-error').innerText = "Errore registrazione."; }
+        }
+
+        function showPage(pId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            if(pId === 'stats-page') populateExSelect();
+        }
+
+        function switchInnerTab(tabId, el) {
+            document.querySelectorAll('.inner-tab').forEach(t => t.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function syncDates(val) {
+            document.getElementById('datePlan').value = val;
+            document.getElementById('dateLog').value = val;
+            document.getElementById('dateMeal').value = val;
+            loadPlan(val); loadHistory(val); loadMeals(val);
+        }
+
+        function savePlan() {
+            const date = document.getElementById('datePlan').value;
+            const data = {
+                w: document.getElementById('warmup').value,
+                s: document.getElementById('strength').value,
+                g: document.getElementById('gymnastics').value,
+                m: document.getElementById('mainWod').value
+            };
+            window.dbSet(window.dbRef(window.db, `users/${currentUser.uid}/plans/${date}`), data);
+        }
+
+        function loadPlan(date) {
+    window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/plans/${date}`), snap => {
+        const p = snap.val();
+        const div = document.getElementById('activePlanDisplay');
+        const ids = ['warmup', 'strength', 'gymnastics', 'mainWod'];
+
+        if(p) {
+            // Genera il contenuto della lavagna rispettando i ritorni a capo
+            let visual = `<div class="whiteboard">`;
+            
+            if(p.w) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">WARM-UP</small>${p.w}\n\n`;
+            if(p.s) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">FORZA / SKILL</small>${p.s}\n\n`;
+            if(p.g) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">GINNASTICA</small>${p.g}\n\n`;
+            if(p.m) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">WOD</small>${p.m}`;
+            
+            visual += `</div>`;
+            div.innerHTML = visual;
+
+            // Inserimento testi nelle textarea
+            document.getElementById('warmup').value = p.w || '';
+            document.getElementById('strength').value = p.s || '';
+            document.getElementById('gymnastics').value = p.g || '';
+            document.getElementById('mainWod').value = p.m || '';
+
+            // Calcolo altezza automatica
+            setTimeout(() => {
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) autoResize(el);
+                });
+            }, 50);
+        } else {
+            div.innerHTML = `<div style="text-align:center; padding:20px; color:#444; font-size:0.8em;">NESSUN PROGRAMMA PER QUESTA DATA</div>`;
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.value = "";
+                    el.style.height = '50px'; 
+                }
+            });
+        }
+    });
+}
+
+        function loadHistory(date) {
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+                const data = snap.val();
+                const display = document.getElementById('historyDisplay');
+                display.innerHTML = "";
+                if(data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        const item = data[key];
+                        if(item.date === date) {
+                            display.innerHTML += `<div class="log-entry" style="border-left-color:${item.type==='wod'?'#00f2ff':'#ff00ff'}">
+                                <button class="btn-del" onclick="deleteItem('history/${key}')">×</button>
+                                <b>${item.name}</b>: ${item.res}<br><small>${item.note || ''}</small></div>`;
+                        }
+                    });
+                }
+            });
+        }
+
+        function addFoodLocal() {
+            const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value;
+            if(n && w && c) {
+                tempItems.push({n, kcal: Math.round((w*c)/100)});
+                document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", ");
+                document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = "";
+            }
+        }
+
+        function saveMealCloud() {
+            const date = document.getElementById('dateMeal').value;
+            const total = tempItems.reduce((s,x)=>s+x.kcal,0);
+            if(total === 0) return;
+            window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') });
+            tempItems = []; document.getElementById('temp-meal-summary').innerText = "";
+        }
+
+        function loadMeals(date) {
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/meals`), snap => {
+                const data = snap.val();
+                const display = document.getElementById('mealsHistoryDisplay');
+                display.innerHTML = "";
+                if(data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        const item = data[key];
+                        if(item.date === date) {
+                            display.innerHTML += `<div class="log-entry" style="border-left-color:var(--neon-green)">
+                                <button class="btn-del" onclick="deleteItem('meals/${key}')">×</button>
+                                <b>Energia</b>: ${item.total} kcal<br><small>${item.desc}</small></div>`;
+                        }
+                    });
+                }
+            });
+        }
+
+        function populateExSelect() {
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+                const data = snap.val();
+                const sel = document.getElementById('exSelect');
+                if(!data) return;
+                const names = [...new Set(Object.values(data).filter(x => x.type === 'forza' || !x.type).map(x => x.name))];
+                sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+                initStatsListener();
+            }, { onlyOnce: true });
+        }
+
+        function initStatsListener() {
+            const exName = document.getElementById('exSelect').value;
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+                const data = snap.val();
+                if(!data) return;
+                const historyArr = Object.values(data).filter(i => i.name === exName).sort((a,b) => new Date(a.date)-new Date(b.date));
+                const labels = historyArr.map(i => i.date.split('-').reverse().join('/'));
+                const values = historyArr.map(i => parseFloat(i.res));
+                if (myChart) myChart.destroy();
+                myChart = new Chart(document.getElementById('statsChart').getContext('2d'), {
+                    type:'line', data:{labels, datasets:[{label:exName, data:values, borderColor:'#00f2ff', tension:0.3}]},
+                    options:{scales:{y:{grid:{color:'#222'},ticks:{color:'#888'}},x:{grid:{color:'#222'},ticks:{color:'#888'}}}}
+                });
+            });
+        }
+
+        window.deleteItem = (path) => { if(confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${currentUser.uid}/${path}`)); }
+
+        // --- NUOVE FUNZIONI ESPORTAZIONE CLOUD ---
+
+        async function exportCSV() {
+            const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`));
+            const data = snap.val();
+            if (!data) { alert("Nessun dato da esportare."); return; }
+            const history = Object.values(data);
+            const headers = ["Data", "Esercizio", "Risultato", "Note"];
+            const rows = history.map(e => [e.date, `"${e.name}"`, e.res, `"${(e.note || "").replace(/"/g, '""')}"`].join(","));
+            const csvContent = [headers.join(","), ...rows].join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `report_crossfit_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        async function exportHTML() {
+            const hSnap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`));
+            const pSnap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/plans`));
+            const history = hSnap.val();
+            const plans = pSnap.val() || {};
+            if (!history) { alert("Nessun dato da esportare."); return; }
+
+            let html = `<html><head><title>Cyber Report</title><style>
+                body { background:#050505; color:#e0e0e0; font-family:sans-serif; padding:20px; }
+                .entry { border-left:4px solid #00f2ff; background:#141419; padding:15px; margin-bottom:15px; }
+                h1 { color:#00f2ff; border-bottom:1px solid #00f2ff; }
+                .wod { color:#ff00ff; font-size:0.9em; margin-top:10px; border-top:1px dashed #333; padding-top:10px; }
+            </style></head><body><h1>STORICO ALLENAMENTI CLOUD</h1>`;
+
+            Object.values(history).sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(h => {
+                const plan = plans[h.date];
+                html += `<div class="entry">
+                    <b>${h.date.split('-').reverse().join('/')}</b> - <b>${h.name}</b>: ${h.res}<br>
+                    <i>${h.note || ''}</i>`;
+                if(plan && (plan.s || plan.m)) {
+                    html += `<div class="wod">LAVAGNA DEL GIORNO:<br>
+                             ${plan.s ? 'Skill: '+plan.s+'<br>' : ''}
+                             ${plan.m ? 'WOD: '+plan.m : ''}</div>`;
+                }
+                html += `</div>`;
+            });
+            html += `</body></html>`;
+
+            const blob = new Blob([html], {type: 'text/html'});
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `cyber_report_history.html`;
+            link.click();
+        }
+    </script>
+</body>
+</html>
