@@ -160,36 +160,35 @@
         .container { max-width: 500px; margin: auto; padding: 0 20px; display: none; box-sizing: border-box; }
         .page { display: none; }
         .page.active { display: block; }
-        .card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 4px; 
-            margin-bottom: 20px; 
-            border-left: 4px solid var(--neon-blue); 
-            box-shadow: 0 0 15px rgba(0,0,0,0.5); 
-            box-sizing: border-box; 
-            width: 100%;
-        }
-        /* Forza tutti i campi ad avere la stessa identica larghezza */
+        /* Appiattisce e uniforma tutti i campi di inserimento */
         input, textarea, select { 
             width: 100% !important; 
-            padding: 12px; 
-            margin-bottom: 15px; 
-            background: #000; 
-            border: 1px solid #333; 
-            color: #fff; 
-            box-sizing: border-box; /* Include padding e bordi nel 100% */
-            font-family: 'Orbitron';
+            padding: 12px !important; 
+            margin: 0 0 15px 0 !important; 
+            background: #000 !important; 
+            border: 1px solid #333 !important; 
+            color: #fff !important; 
+            box-sizing: border-box !important; /* Forza il calcolo della larghezza includendo il padding */
+            font-family: 'Orbitron', sans-serif;
             font-size: 14px;
             display: block;
-            appearance: none; /* Rimuove stili predefiniti dei vari browser */
-            -webkit-appearance: none;
+            border-radius: 0; /* Rimuove arrotondamenti automatici su iPhone */
+            -webkit-appearance: none; /* Rimuove lo stile predefinito Apple */
+            appearance: none;
         }
 
-        /* Correzione specifica per gli input data su iOS/Chrome */
+        /* Correzione chirurgica per l'input data */
         input[type="date"] {
-            min-height: 45px; /* Allinea l'altezza agli altri input */
-            position: relative;
+            min-height: 45px;
+            line-height: 1.2;
+            background-color: #000;
+        }
+
+        /* Per assicurarci che le card contengano tutto correttamente */
+        .card {
+            box-sizing: border-box !important;
+            width: 100% !important;
+            overflow: hidden; /* Impedisce a elementi interni di uscire */
         }
         .btn { width: 100%; padding: 16px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-bottom: 5px; }
         .btn-blue { background: #0055ff; color: white; }
