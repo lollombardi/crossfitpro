@@ -459,7 +459,39 @@
         }
 
         function switchInnerTab(tabId, el) { document.querySelectorAll('.inner-tab').forEach(t => t.style.display = 'none'); document.getElementById(tabId).style.display = 'block'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
-        function saveEntry(type) { const date = document.getElementById('dateLog').value; let data = { date, type }; if(type === 'forza') { data.name = document.getElementById('nameForza').value; data.res = document.getElementById('valForza').value; data.note = document.getElementById('noteForza').value; } else { data.name = document.getElementById('wodName').value; data.res = document.getElementById('wodRes').value; data.note = document.getElementById('wodNote').value; } if(!data.name || !data.res) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/history`), data); }
+        function saveEntry(type) { 
+    const date = document.getElementById('dateLog').value; 
+    let data = { date, type }; 
+    
+    if(type === 'forza') { 
+        data.name = document.getElementById('nameForza').value; 
+        data.res = document.getElementById('valForza').value; 
+        data.note = document.getElementById('noteForza').value; 
+    } else { 
+        data.name = document.getElementById('wodName').value; 
+        data.res = document.getElementById('wodRes').value; 
+        data.note = document.getElementById('wodNote').value; 
+    } 
+
+    // Verifica se i campi sono vuoti
+    if(!data.name || !data.res) {
+        alert("Inserisci sia il nome che il risultato!");
+        return;
+    }
+
+    // Salvataggio su Firebase
+    window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/history`), data); 
+
+    // PULIZIA CAMPI: Fondamentale per capire che il salvataggio è avvenuto
+    if(type === 'forza') {
+        document.getElementById('valForza').value = "";
+        document.getElementById('noteForza').value = "";
+    } else {
+        document.getElementById('wodName').value = "";
+        document.getElementById('wodRes').value = "";
+        document.getElementById('wodNote').value = "";
+    }
+}
         function loadHistory(date) { 
     window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { 
         const data = snap.val(); 
@@ -541,6 +573,7 @@
 </script>
 </body>
 </html>
+
 
 
 
