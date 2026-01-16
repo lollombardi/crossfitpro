@@ -464,7 +464,25 @@
         function addFoodLocal() { const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value; if(n && w && c) { tempItems.push({n, kcal: Math.round((w*c)/100)}); document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", "); document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = ""; } }
         function saveMealCloud() { const date = document.getElementById('dateMeal').value; const total = tempItems.reduce((s,x)=>s+x.kcal,0); if(total === 0) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') }); tempItems = []; document.getElementById('temp-meal-summary').innerText = ""; }
         function loadMeals(date) { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/meals`), snap => { const data = snap.val(); const display = document.getElementById('mealsHistoryDisplay'); display.innerHTML = ""; if(data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if(item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color:var(--neon-green)"><button class="btn-del" onclick="deleteItem('meals/${key}')">×</button><b>Energia</b>: ${item.total} kcal<br><small>${item.desc}</small></div>`; } }); } }); }
-        function populateExSelect() { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { const data = snap.val(); const sel = document.getElementById('exSelect'); if(!data) return; const names = [...new Set(Object.values(data).filter(x => x.type === 'forza' || !x.type).map(x => x.name))]; sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join(''); initStatsListener(); }, { onlyOnce: true }); }
+        function populateExSelect() { 
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { 
+                const data = snap.val(); 
+                const sel = document.getElementById('exSelect'); 
+                if(!data) return; 
+
+                // 1. Estraiamo i nomi unici
+                let names = [...new Set(Object.values(data)
+                    .filter(x => x.type === 'forza' || !x.type)
+                    .map(x => x.name))];
+
+                // 2. AGGIUNGI QUESTA RIGA: Ordina i nomi alfabeticamente
+                names.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
+                // 3. Popoliamo la select
+                sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join(''); 
+                initStatsListener(); 
+            }, { onlyOnce: true }); 
+        }
         function initStatsListener() { const exName = document.getElementById('exSelect').value; window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { const data = snap.val(); if(!data) return; const historyArr = Object.values(data).filter(i => i.name === exName).sort((a,b) => new Date(a.date)-new Date(b.date)); const labels = historyArr.map(i => i.date.split('-').reverse().join('/')); const values = historyArr.map(i => parseFloat(i.res)); if (myChart) myChart.destroy(); myChart = new Chart(document.getElementById('statsChart').getContext('2d'), { type:'line', data:{labels, datasets:[{label:exName, data:values, borderColor:'#00f2ff', tension:0.3}]}, options:{scales:{y:{grid:{color:'#222'},ticks:{color:'#888'}},x:{grid:{color:'#222'},ticks:{color:'#888'}}}} }); }); }
         window.deleteItem = (path) => { if(confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${currentUser.uid}/${path}`)); }
         async function exportCSV() { const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const data = snap.val(); if (!data) return; const history = Object.values(data); const csv = ["Data,Esercizio,Risultato,Note", ...history.map(e => `${e.date},"${e.name}",${e.res},"${(e.note || "")}"`)].join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = `report.csv`; link.click(); }
@@ -497,6 +515,7 @@
 </script>
 </body>
 </html>
+
 
 
 
