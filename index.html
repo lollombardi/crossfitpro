@@ -460,7 +460,33 @@
 
         function switchInnerTab(tabId, el) { document.querySelectorAll('.inner-tab').forEach(t => t.style.display = 'none'); document.getElementById(tabId).style.display = 'block'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
         function saveEntry(type) { const date = document.getElementById('dateLog').value; let data = { date, type }; if(type === 'forza') { data.name = document.getElementById('nameForza').value; data.res = document.getElementById('valForza').value; data.note = document.getElementById('noteForza').value; } else { data.name = document.getElementById('wodName').value; data.res = document.getElementById('wodRes').value; data.note = document.getElementById('wodNote').value; } if(!data.name || !data.res) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/history`), data); }
-        function loadHistory(date) { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { const data = snap.val(); const display = document.getElementById('historyDisplay'); display.innerHTML = ""; if(data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if(item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color:${item.type==='wod'?'#00f2ff':'#ff00ff'}"><button class="btn-del" onclick="deleteItem('history/${key}')">×</button><b>${item.name}</b>: ${item.res}<br><small>${item.note || ''}</small></div>`; } }); } }); }
+        function loadHistory(date) { 
+    window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { 
+        const data = snap.val(); 
+        const display = document.getElementById('historyDisplay'); 
+        display.innerHTML = ""; 
+        
+        if(data) { 
+            // Ordiniamo per mostrare gli ultimi inseriti in alto
+            Object.keys(data).reverse().forEach(key => { 
+                const item = data[key]; 
+                if(item.date === date) { 
+                    // Definiamo il colore del bordo in base al tipo
+                    const borderColor = (item.type === 'wod') ? 'var(--neon-blue)' : 'var(--neon-pink)';
+                    const label = (item.type === 'wod') ? 'WOD' : 'FORZA';
+
+                    display.innerHTML += `
+                        <div class="log-entry" style="border-left: 4px solid ${borderColor}">
+                            <button class="btn-del" onclick="deleteItem('history/${key}')">×</button>
+                            <small style="color:${borderColor}; font-size:0.7em; display:block;">${label}</small>
+                            <b>${item.name}</b>: ${item.res}<br>
+                            <small>${item.note || ''}</small>
+                        </div>`; 
+                } 
+            }); 
+        } 
+    }); 
+}
         function addFoodLocal() { const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value; if(n && w && c) { tempItems.push({n, kcal: Math.round((w*c)/100)}); document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", "); document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = ""; } }
         function saveMealCloud() { const date = document.getElementById('dateMeal').value; const total = tempItems.reduce((s,x)=>s+x.kcal,0); if(total === 0) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') }); tempItems = []; document.getElementById('temp-meal-summary').innerText = ""; }
         function loadMeals(date) { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/meals`), snap => { const data = snap.val(); const display = document.getElementById('mealsHistoryDisplay'); display.innerHTML = ""; if(data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if(item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color:var(--neon-green)"><button class="btn-del" onclick="deleteItem('meals/${key}')">×</button><b>Energia</b>: ${item.total} kcal<br><small>${item.desc}</small></div>`; } }); } }); }
@@ -515,6 +541,7 @@
 </script>
 </body>
 </html>
+
 
 
 
