@@ -1,16 +1,25 @@
 {
-  "name": "CrossFit Pro",
+  "name": "CrossFit Pro Cloud",
   "short_name": "CFitPro",
+  "description": "Diario di allenamento CrossFit con gestione massimali e pasti in stile Cyberpunk.",
+  "id": "/crossfitpro/",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#000000",
+  "orientation": "portrait",
+  "background_color": "#050505",
   "theme_color": "#00f2ff",
   "icons": [
     {
       "src": "index.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "index.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
