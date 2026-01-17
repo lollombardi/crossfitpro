@@ -269,19 +269,26 @@
                 <div id="benchmarkContent" style="display: none; margin-top: 15px;">
                     <select id="benchmarkSelect" onchange="updateBenchmarkText()"
                         style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #444; border-radius: 5px; font-size: 0.9em;">
-                        <option value="">-- Scegli una "Girl" --</option>
-                        <option value="fran">FRAN</option>
-                        <option value="cindy">CINDY</option>
-                        <option value="murph">MURPH (Hero WOD)</option>
-                        <option value="grace">GRACE</option>
-                        <option value="annie">ANNIE</option>
-                        <option value="diane">DIANE</option>
-                        <option value="elizabeth">ELIZABETH</option>
-                        <option value="isabel">ISABEL</option>
+                        <option value="">-- Scegli un Benchmark --</option>
+            
+                        <optgroup label="THE GIRLS (Benchmark)">
+                            <option value="fran">FRAN</option>
+                            <option value="cindy">CINDY</option>
+                            <option value="grace">GRACE</option>
+                            <option value="annie">ANNIE</option>
+                            <option value="diane">DIANE</option>
+                            <option value="elizabeth">ELIZABETH</option>
+                            <option value="isabel">ISABEL</option>
+                        </optgroup>
+            
+                        <optgroup label="HERO WODS (Special)">
+                            <option value="murph">MURPH</option>
+                            <option value="dt">DT</option>
+                        </optgroup>
                     </select>
             
                     <div id="benchmarkDetails"
-                        style="margin-top: 15px; padding: 10px; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px dashed #444; display: none;">
+                        style="margin-top: 15px; padding: 10px; border-radius: 4px; background: rgba(0,0,0,0.2); display: none;">
                     </div>
                 </div>
             </div>
@@ -699,27 +706,41 @@
             }
 
             function updateBenchmarkText() {
-                const data = {
-                    "fran": { t: "FRAN", d: "21-15-9 Ripetizioni:<br>• Thrusters (43/30 kg)<br>• Pull-ups" },
-                    "cindy": { t: "CINDY", d: "AMRAP 20 minuti:<br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Air Squats" },
-                    "murph": { t: "MURPH", d: "Per il tempo (con Gilet 9/6kg):<br>• 1 Miglio di corsa (1.6km)<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Air Squats<br>• 1 Miglio di corsa (1.6km)<br><br><small><i>Nota: Si possono dividere le rep (es. 20 round da 5-10-15).</i></small>"},
-                    "grace": { t: "GRACE", d: "Per il tempo (For Time):<br>• 30 Clean & Jerks (61/43 kg)" },
-                    "annie": { t: "ANNIE", d: "50-40-30-20-10 Ripetizioni:<br>• Double-unders<br>• Sit-ups" },
-                    "diane": { t: "DIANE", d: "21-15-9 Ripetizioni:<br>• Deadlifts (102/70 kg)<br>• Handstand Push-ups" },
-                    "elizabeth": { t: "ELIZABETH", d: "21-15-9 Ripetizioni:<br>• Cleans (61/43 kg)<br>• Ring Dips" },
-                    "isabel": { t: "ISABEL", d: "Per il tempo (For Time):<br>• 30 Snatches (61/43 kg)" }
-                };
+                    const data = {
+                        // GIRLS
+                        "fran": { t: "FRAN", type: "girl", d: "21-15-9 Ripetizioni:<br>• Thrusters (43/30 kg)<br>• Pull-ups" },
+                        "cindy": { t: "CINDY", type: "girl", d: "AMRAP 20 minuti:<br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Air Squats" },
+                        "grace": { t: "GRACE", type: "girl", d: "For Time:<br>• 30 Clean & Jerks (61/43 kg)" },
+                        "annie": { t: "ANNIE", type: "girl", d: "50-40-30-20-10 Ripetizioni:<br>• Double-unders<br>• Sit-ups" },
+                        "diane": { t: "DIANE", type: "girl", d: "21-15-9 Ripetizioni:<br>• Deadlifts (102/70 kg)<br>• Handstand Push-ups" },
+                        "elizabeth": { t: "ELIZABETH", type: "girl", d: "21-15-9 Ripetizioni:<br>• Cleans (61/43 kg)<br>• Ring Dips" },
+                        "isabel": { t: "ISABEL", type: "girl", d: "For Time:<br>• 30 Snatches (61/43 kg)" },
 
-                const val = document.getElementById('benchmarkSelect').value;
-                const det = document.getElementById('benchmarkDetails');
+                        // HEROES
+                        "murph": { t: "MURPH", type: "hero", d: "For Time (Gilet 9/6kg):<br>• 1.6km Corsa<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Air Squats<br>• 1.6km Corsa" },
+                        "dt": { t: "DT", type: "hero", d: "5 Round For Time:<br>• 12 Deadlifts (70/47 kg)<br>• 9 Hang Power Cleans<br>• 6 Push Jerks" }
+                    };
 
-                if (val && data[val]) {
-                    det.style.display = 'block';
-                    det.innerHTML = `<b style="color:var(--neon-pink);">${data[val].t}</b><br><p style="margin:5px 0 0; font-size:0.9em;">${data[val].d}</p>`;
-                } else {
-                    det.style.display = 'none';
+                    const val = document.getElementById('benchmarkSelect').value;
+                    const det = document.getElementById('benchmarkDetails');
+
+                    if (val && data[val]) {
+                        const wod = data[val];
+                        // Scegliamo il colore in base al tipo
+                        const color = (wod.type === 'hero') ? '#ff9900' : 'var(--neon-pink)';
+                        const label = (wod.type === 'hero') ? 'HERO WOD' : 'GIRL BENCHMARK';
+
+                        det.style.display = 'block';
+                        det.style.borderLeft = `3px solid ${color}`; // Aggiungiamo un bordino laterale colorato
+                        det.innerHTML = `
+            <small style="color:${color}; font-size:0.7em; letter-spacing:1px;">${label}</small><br>
+            <b style="color:${color}; font-size:1.1em;">${wod.t}</b><br>
+            <p style="margin:5px 0 0; font-size:0.9em; line-height:1.4;">${wod.d}</p>
+        `;
+                    } else {
+                        det.style.display = 'none';
+                    }
                 }
-            }
         window.deleteItem = (path) => { if(confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${currentUser.uid}/${path}`)); }
         async function exportCSV() { const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const data = snap.val(); if (!data) return; const history = Object.values(data); const csv = ["Data,Esercizio,Risultato,Note", ...history.map(e => `${e.date},"${e.name}",${e.res},"${(e.note || "")}"`)].join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = `report.csv`; link.click(); }
         async function exportHTML() { const hSnap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const history = hSnap.val(); if (!history) return; let html = `<html><body style="background:#050505;color:#fff;"><h1>Report</h1>`; Object.values(history).forEach(h => { html += `<div style="border-left:4px solid #00f2ff;padding:10px;margin:10px;">${h.date} - ${h.name}: ${h.res}</div>`; }); html += `</body></html>`; const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([html], {type:'text/html'})); link.download = `report.html`; link.click(); }
