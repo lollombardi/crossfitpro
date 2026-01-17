@@ -303,27 +303,44 @@
                 <input type="number" id="calcWeight" placeholder="Inserisci Kg (es. 100)" oninput="calculatePerc()"
                     style="font-size: 1.2em; text-align: center; border: 1px solid var(--neon-blue); background: rgba(0,0,0,0.2); color: #fff; border-radius: 5px; width: 100%; padding: 10px;">
         
-                <div id="percResult" style="margin-top:15px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center; padding-bottom: 5px;">
-                    </div>
+                <div id="percResult"
+                    style="margin-top:15px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center; padding-bottom: 5px;">
+                </div>
             </div>
         
             <div class="card" style="margin-bottom: 20px;">
-                <select id="exSelect" onchange="initStatsListener()"></select>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.7em; color: #888; display: block; margin-bottom: 5px;">DA:</label>
+                        <input type="date" id="statsDateFrom" onchange="initStatsListener()"
+                            style="font-size: 0.8em; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; border-radius: 4px; width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.7em; color: #888; display: block; margin-bottom: 5px;">A:</label>
+                        <input type="date" id="statsDateTo" onchange="initStatsListener()"
+                            style="font-size: 0.8em; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; border-radius: 4px; width: 100%;">
+                    </div>
+                </div>
+        
+                <select id="exSelect" onchange="initStatsListener()" style="margin-bottom: 10px;"></select>
                 <canvas id="statsChart"></canvas>
             </div>
         
             <div class="card" style="border-left-color: var(--neon-pink);">
                 <button class="btn btn-blue" onclick="exportCSV()">REPORT EXCEL (CSV)</button>
                 <button class="btn btn-red" onclick="exportHTML()">REPORT STORICO (HTML)</button>
-                <button class="btn" style="background: #ffcc00; color: black; margin-bottom: 20px;" onclick="exportJSON()">REPORT JSON (BACKUP)</button>
-                
+                <button class="btn" style="background: #ffcc00; color: black; margin-bottom: 20px;"
+                    onclick="exportJSON()">REPORT JSON (BACKUP)</button>
+        
                 <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-                
+        
                 <h3 style="color:#ff9900; font-size:0.8em; text-transform: uppercase;">Importa Backup JSON</h3>
-                <input type="file" id="importJsonFile" accept=".json" style="font-size: 0.7em; margin-bottom: 10px; width: 100%;">
+                <input type="file" id="importJsonFile" accept=".json"
+                    style="font-size: 0.7em; margin-bottom: 10px; width: 100%;">
                 <button class="btn" style="background:#ff9900; color:white;" onclick="importJSON()">ESEGUI IMPORTAZIONE</button>
             </div>
         </div>
+</div>
 
     <script>
         let currentUser = null;
@@ -585,7 +602,61 @@
                 initStatsListener(); 
             }, { onlyOnce: true }); 
         }
-        function initStatsListener() { const exName = document.getElementById('exSelect').value; window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { const data = snap.val(); if(!data) return; const historyArr = Object.values(data).filter(i => i.name === exName).sort((a,b) => new Date(a.date)-new Date(b.date)); const labels = historyArr.map(i => i.date.split('-').reverse().join('/')); const values = historyArr.map(i => parseFloat(i.res)); if (myChart) myChart.destroy(); myChart = new Chart(document.getElementById('statsChart').getContext('2d'), { type:'line', data:{labels, datasets:[{label:exName, data:values, borderColor:'#00f2ff', tension:0.3}]}, options:{scales:{y:{grid:{color:'#222'},ticks:{color:'#888'}},x:{grid:{color:'#222'},ticks:{color:'#888'}}}} }); }); }
+    function initStatsListener() {
+        const exName = document.getElementById('exSelect').value;
+        // Recuperiamo i valori delle date
+        const dateFrom = document.getElementById('statsDateFrom').value;
+        const dateTo = document.getElementById('statsDateTo').value;
+
+        window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+            const data = snap.val();
+            if (!data) return;
+
+            // 1. Filtriamo per nome esercizio
+            let historyArr = Object.values(data).filter(i => i.name === exName);
+
+            // 2. APPLICHIAMO I FILTRI DATA (se inseriti)
+            if (dateFrom) {
+                historyArr = historyArr.filter(i => i.date >= dateFrom);
+            }
+            if (dateTo) {
+                historyArr = historyArr.filter(i => i.date <= dateTo);
+            }
+
+            // 3. Ordiniamo i dati per data (dal più vecchio al più recente)
+            historyArr.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const labels = historyArr.map(i => i.date.split('-').reverse().join('/'));
+            const values = historyArr.map(i => parseFloat(i.res));
+
+            // 4. Distruggiamo il grafico precedente prima di crearne uno nuovo
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(document.getElementById('statsChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: exName,
+                        data: values,
+                        borderColor: '#00f2ff',
+                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { grid: { color: '#222' }, ticks: { color: '#888' } },
+                        x: { grid: { color: '#222' }, ticks: { color: '#888' } }
+                    },
+                    plugins: {
+                        legend: { display: false } // Nascondiamo la legenda per pulizia
+                    }
+                }
+            });
+        });
+    }
         window.deleteItem = (path) => { if(confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${currentUser.uid}/${path}`)); }
         async function exportCSV() { const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const data = snap.val(); if (!data) return; const history = Object.values(data); const csv = ["Data,Esercizio,Risultato,Note", ...history.map(e => `${e.date},"${e.name}",${e.res},"${(e.note || "")}"`)].join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = `report.csv`; link.click(); }
         async function exportHTML() { const hSnap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const history = hSnap.val(); if (!history) return; let html = `<html><body style="background:#050505;color:#fff;"><h1>Report</h1>`; Object.values(history).forEach(h => { html += `<div style="border-left:4px solid #00f2ff;padding:10px;margin:10px;">${h.date} - ${h.name}: ${h.res}</div>`; }); html += `</body></html>`; const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([html], {type:'text/html'})); link.download = `report.html`; link.click(); }
@@ -617,3 +688,4 @@
 </script>
 </body>
 </html>
+
