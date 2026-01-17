@@ -287,8 +287,19 @@
                         </optgroup>
                     </select>
             
-                    <div id="benchmarkDetails"
-                        style="margin-top: 15px; padding: 10px; border-radius: 4px; background: rgba(0,0,0,0.2); display: none;">
+                    <div id="benchmarkDetails" style="
+                        margin-top: 10px; 
+                        padding: 12px; 
+                        border-radius: 6px; 
+                        background: rgba(255, 255, 255, 0.05); 
+                        border-left: 3px solid var(--neon-pink);
+                        /* FISSA IL CONTENITORE */
+                        max-height: 180px;    /* Altezza contenuta per tutti i WOD */
+                        overflow-y: auto;     /* Scroll interno se necessario */
+                        box-sizing: border-box; 
+                        font-size: 0.85em; 
+                        line-height: 1.4;
+                        display: none;">
                     </div>
                 </div>
             </div>
@@ -708,17 +719,17 @@
             function updateBenchmarkText() {
                     const data = {
                         // GIRLS
-                        "fran": { t: "FRAN", type: "girl", d: "21-15-9 Ripetizioni:<br>• Thrusters (43/30 kg)<br>• Pull-ups" },
-                        "cindy": { t: "CINDY", type: "girl", d: "AMRAP 20 minuti:<br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Air Squats" },
-                        "grace": { t: "GRACE", type: "girl", d: "For Time:<br>• 30 Clean & Jerks (61/43 kg)" },
-                        "annie": { t: "ANNIE", type: "girl", d: "50-40-30-20-10 Ripetizioni:<br>• Double-unders<br>• Sit-ups" },
-                        "diane": { t: "DIANE", type: "girl", d: "21-15-9 Ripetizioni:<br>• Deadlifts (102/70 kg)<br>• Handstand Push-ups" },
-                        "elizabeth": { t: "ELIZABETH", type: "girl", d: "21-15-9 Ripetizioni:<br>• Cleans (61/43 kg)<br>• Ring Dips" },
-                        "isabel": { t: "ISABEL", type: "girl", d: "For Time:<br>• 30 Snatches (61/43 kg)" },
+                        "fran": { t: "FRAN", type: "girl", d: "<b>21-15-9:</b><br>• Thrusters (43/30kg)<br>• Pull-ups" },
+                        "cindy": { t: "CINDY", type: "girl", d: "<b>AMRAP 20':</b><br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Squats" },
+                        "grace": { t: "GRACE", type: "girl", d: "<b>For Time:</b><br>• 30 Clean & Jerks (61/43kg)" },
+                        "annie": { t: "ANNIE", type: "girl", d: "<b>50-40-30-20-10:</b><br>• Double-unders<br>• Sit-ups" },
+                        "diane": { t: "DIANE", type: "girl", d: "<b>21-15-9:</b><br>• Deadlift (102/70kg)<br>• HSPU" },
+                        "elizabeth": { t: "ELIZABETH", type: "girl", d: "<b>21-15-9:</b><br>• Cleans (61/43kg)<br>• Ring Dips" },
+                        "isabel": { t: "ISABEL", type: "girl", d: "<b>For Time:</b><br>• 30 Snatches (61/43kg)" },
 
                         // HEROES
-                        "murph": { t: "MURPH", type: "hero", d: "For Time (Gilet 9/6kg):<br>• 1.6km Corsa<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Air Squats<br>• 1.6km Corsa" },
-                        "dt": { t: "DT", type: "hero", d: "5 Round For Time:<br>• 12 Deadlifts (70/47 kg)<br>• 9 Hang Power Cleans<br>• 6 Push Jerks" }
+                        "murph": { t: "MURPH", type: "hero", d: "<b>For Time:</b><br>• 1.6km Run<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Squats<br>• 1.6km Run" },
+                        "dt": { t: "DT", type: "hero", d: "<b>5 Rounds:</b><br>• 12 DL (70/47kg)<br>• 9 Hang Power Clean<br>• 6 Push Jerk" }
                     };
 
                     const val = document.getElementById('benchmarkSelect').value;
