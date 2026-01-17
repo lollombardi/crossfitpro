@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-	<link rel="icon" type="image/png" href="index.png">
-	<link rel="apple-touch-icon" href="index.png">
-	<link rel="manifest" href="manifest.json">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="icon" type="image/png" href="index.png">
+    <link rel="apple-touch-icon" href="index.png">
+    <link rel="manifest" href="manifest.json">
     <title>CrossFit Pro - Cloud Cyber Edition</title>
-	
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
             signOut,
             sendEmailVerification,
             sendPasswordResetEmail,
-            updateEmail 
+            updateEmail
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -38,7 +40,7 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        window.auth = auth; 
+        window.auth = auth;
         window.db = db;
         window.signIn = (e, p) => signInWithEmailAndPassword(auth, e, p);
         window.signUp = (e, p) => createUserWithEmailAndPassword(auth, e, p);
@@ -73,7 +75,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -84,36 +86,57 @@
             --text-main: #e0e0e0;
         }
 
-        textarea { resize: none; overflow: hidden; min-height: 50px; width: 100%; box-sizing: border-box; display: block; }
-        body { font-family: 'Orbitron', sans-serif; background: var(--bg-black); color: var(--text-main); margin: 0; padding-top: 90px; overflow-x: hidden; background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%); }
-        #login-overlay { 
-            position: fixed; 
-            top:0; left:0; 
-            width:100%; 
-            height:100%; 
-            background: var(--bg-black); 
-            z-index: 2000; 
-            display: flex; 
-            align-items: center; 
+        textarea {
+            resize: none;
+            overflow: hidden;
+            min-height: 50px;
+            width: 100%;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: var(--bg-black);
+            color: var(--text-main);
+            margin: 0;
+            padding-top: 90px;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%);
+        }
+
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-black);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            padding: 0; /* Rimosso padding esterno */
+            padding: 0;
+            /* Rimosso padding esterno */
             margin: 0;
         }
 
-	.login-card { 
-            background: var(--card-bg); 
-            padding: 30px; 
-            border: 1px solid var(--neon-blue); 
-            box-shadow: 0 0 20px var(--neon-blue); 
-            width: 85%; 
-            max-width: 320px; 
+        .login-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
+            width: 85%;
+            max-width: 320px;
             box-sizing: border-box;
-	    width: 100%;
-            box-sizing: border-box; /* Forza l'input a stare dentro la card */
-            font-size: 16px; /* Evita lo zoom automatico di iOS quando clicchi sui campi */
+            width: 100%;
+            box-sizing: border-box;
+            /* Forza l'input a stare dentro la card */
+            font-size: 16px;
+            /* Evita lo zoom automatico di iOS quando clicchi sui campi */
         }
 
-	.password-container {
+        .password-container {
             position: relative;
             width: 100%;
             margin-bottom: 15px;
@@ -121,7 +144,8 @@
 
         .login-card input {
             width: 100%;
-            padding: 12px 45px 12px 12px; /* Aumentato padding destro per non sovrapporre testo e occhio */
+            padding: 12px 45px 12px 12px;
+            /* Aumentato padding destro per non sovrapporre testo e occhio */
             background: #000;
             border: 1px solid #333;
             color: #fff;
@@ -135,48 +159,93 @@
         .toggle-password {
             position: absolute;
             right: 15px;
-            top: 50%; /* Metà dell'altezza del contenitore */
-            transform: translateY(-50%); /* Lo sposta indietro esattamente della metà della sua altezza */
+            top: 50%;
+            /* Metà dell'altezza del contenitore */
+            transform: translateY(-50%);
+            /* Lo sposta indietro esattamente della metà della sua altezza */
             cursor: pointer;
             color: #ffffff;
             font-size: 1.2em;
             z-index: 10;
             user-select: none;
-            line-height: 0; /* Fondamentale: annulla l'altezza della riga del font */
+            line-height: 0;
+            /* Fondamentale: annulla l'altezza della riga del font */
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-	#login-pass {
-    	    padding-right: 45px;
-	}
+        #login-pass {
+            padding-right: 45px;
+        }
 
         /* Assicuriamoci che l'input lasci spazio all'icona a destra */
         #login-pass {
             padding-right: 45px;
         }
-      
-.navbar { position: fixed; top: 0; width: 100%; height: 75px; background: rgba(5, 5, 5, 0.95); border-bottom: 2px solid var(--neon-blue); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { color: #666; font-size: 0.65em; cursor: pointer; text-align: center; text-transform: uppercase; font-weight: bold; }
-        .nav-item.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
-        .container { max-width: 500px; margin: auto; padding: 0 20px; display: none; box-sizing: border-box; }
-        .page { display: none; }
-        .page.active { display: block; }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 75px;
+            background: rgba(5, 5, 5, 0.95);
+            border-bottom: 2px solid var(--neon-blue);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: #666;
+            font-size: 0.65em;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .nav-item.active {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 0 20px;
+            display: none;
+            box-sizing: border-box;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
         /* Appiattisce e uniforma tutti i campi di inserimento */
-        input, textarea, select { 
-            width: 100% !important; 
-            padding: 12px !important; 
-            margin: 0 0 15px 0 !important; 
-            background: #000 !important; 
-            border: 1px solid #333 !important; 
-            color: #fff !important; 
-            box-sizing: border-box !important; /* Forza il calcolo della larghezza includendo il padding */
+        input,
+        textarea,
+        select {
+            width: 100% !important;
+            padding: 12px !important;
+            margin: 0 0 15px 0 !important;
+            background: #000 !important;
+            border: 1px solid #333 !important;
+            color: #fff !important;
+            box-sizing: border-box !important;
+            /* Forza il calcolo della larghezza includendo il padding */
             font-family: 'Orbitron', sans-serif;
             font-size: 14px;
             display: block;
-            border-radius: 0; /* Rimuove arrotondamenti automatici su iPhone */
-            -webkit-appearance: none; /* Rimuove lo stile predefinito Apple */
+            border-radius: 0;
+            /* Rimuove arrotondamenti automatici su iPhone */
+            -webkit-appearance: none;
+            /* Rimuove lo stile predefinito Apple */
             appearance: none;
         }
 
@@ -191,39 +260,127 @@
         .card {
             box-sizing: border-box !important;
             width: 100% !important;
-            overflow: hidden; /* Impedisce a elementi interni di uscire */
+            overflow: hidden;
+            /* Impedisce a elementi interni di uscire */
         }
-        .btn { width: 100%; padding: 16px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-bottom: 5px; }
-        .btn-blue { background: #0055ff; color: white; }
-        .btn-green { background: #00cc88; color: white; }
-        .btn-red { background: #ff0055; color: white; }
-        .whiteboard { background: #111; color: var(--neon-blue); padding: 15px; border: 1px solid var(--neon-blue); margin-bottom: 20px; font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word; line-height: 1.4; }
-        .log-entry { background: rgba(255,255,255,0.03); padding: 15px; margin-top: 10px; border: 1px solid #222; position: relative; white-space: pre-wrap; text-align: left;  display:flex; flex-direction: column; align-items: flex-start;}
-		.log-entry div {margin-top: 5px;}
-        .btn-del { position: absolute; top: 10px; right: 10px; color: var(--neon-pink); background: none; border: none; cursor: pointer; font-weight: bold; }
-        .tab-group { display: flex; background: #000; padding: 5px; margin-bottom: 20px; border: 1px solid #333; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #555; cursor: pointer; font-size: 0.75em; font-weight: bold; }
-        .tab-btn.active.forza-style { color: white; border-bottom: 2px solid var(--neon-pink); background: rgba(255,0,255,0.1); }
-        .tab-btn.active.wod-style { color: white; border-bottom: 2px solid var(--neon-blue); background: rgba(0,242,255,0.1); }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            margin-bottom: 5px;
+        }
+
+        .btn-blue {
+            background: #0055ff;
+            color: white;
+        }
+
+        .btn-green {
+            background: #00cc88;
+            color: white;
+        }
+
+        .btn-red {
+            background: #ff0055;
+            color: white;
+        }
+
+        .whiteboard {
+            background: #111;
+            color: var(--neon-blue);
+            padding: 15px;
+            border: 1px solid var(--neon-blue);
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid #222;
+            position: relative;
+            white-space: pre-wrap;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .log-entry div {
+            margin-top: 5px;
+        }
+
+        .btn-del {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--neon-pink);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tab-group {
+            display: flex;
+            background: #000;
+            padding: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #555;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .tab-btn.active.forza-style {
+            color: white;
+            border-bottom: 2px solid var(--neon-pink);
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .tab-btn.active.wod-style {
+            color: white;
+            border-bottom: 2px solid var(--neon-blue);
+            background: rgba(0, 242, 255, 0.1);
+        }
     </style>
 </head>
+
 <body>
 
     <div id="login-overlay">
         <div class="login-card">
             <h2 style="color:var(--neon-blue); text-align:center; margin-bottom:20px;">ACCESSO</h2>
-            
+
             <input type="email" id="login-email" placeholder="Email" autocomplete="email">
-            
+
             <div class="password-container">
                 <input type="password" id="login-pass" placeholder="Password">
                 <span id="eye-icon" class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
             </div>
-            
+
             <button class="btn btn-blue" onclick="handleLogin()">LOGIN</button>
-            
+
             <div style="text-align:center; margin: 15px 0;">
-                <span onclick="handleResetPassword()" style="color:var(--neon-blue); font-size:0.8em; cursor:pointer; text-decoration:underline; letter-spacing:1px;">
+                <span onclick="handleResetPassword()"
+                    style="color:var(--neon-blue); font-size:0.8em; cursor:pointer; text-decoration:underline; letter-spacing:1px;">
                     PASSWORD DIMENTICATA?
                 </span>
             </div>
@@ -231,8 +388,9 @@
             <div style="border-top: 1px solid #333; margin-top: 20px; padding-top: 20px;">
                 <button class="btn btn-green" style="font-size:0.75em;" onclick="handleSignUp()">REGISTRATI</button>
             </div>
-            
-            <p id="login-error" style="color:red; font-size:0.7em; margin-top:10px; text-align:center; min-height:1em;"></p>
+
+            <p id="login-error" style="color:red; font-size:0.7em; margin-top:10px; text-align:center; min-height:1em;">
+            </p>
         </div>
     </div>
 
@@ -256,7 +414,8 @@
                 <textarea id="mainWod" placeholder="WOD" oninput="autoResize(this)"></textarea>
                 <button class="btn btn-blue" onclick="savePlan()">Aggiorna Lavagna</button>
             </div>
-            <div class="card" style="border-left-color: var(--neon-pink); margin-top: 25px; background: rgba(255, 0, 153, 0.03);">
+            <div class="card"
+                style="border-left-color: var(--neon-pink); margin-top: 25px; background: rgba(255, 0, 153, 0.03);">
                 <div onclick="toggleBenchmarks()"
                     style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
                     <h3
@@ -265,12 +424,12 @@
                     </h3>
                     <span id="benchArrow" style="color: var(--neon-pink); transition: 0.3s;">▼</span>
                 </div>
-            
+
                 <div id="benchmarkContent" style="display: none; margin-top: 15px;">
                     <select id="benchmarkSelect" onchange="updateBenchmarkText()"
                         style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #444; border-radius: 5px; font-size: 0.9em;">
                         <option value="">-- Scegli un Benchmark --</option>
-            
+
                         <optgroup label="THE GIRLS (Benchmark)">
                             <option value="fran">FRAN</option>
                             <option value="cindy">CINDY</option>
@@ -280,13 +439,13 @@
                             <option value="elizabeth">ELIZABETH</option>
                             <option value="isabel">ISABEL</option>
                         </optgroup>
-            
+
                         <optgroup label="HERO WODS (Special)">
                             <option value="murph">MURPH</option>
                             <option value="dt">DT</option>
                         </optgroup>
                     </select>
-            
+
                     <div id="benchmarkDetails" style="
                         margin-top: 10px; 
                         padding: 12px; 
@@ -301,62 +460,140 @@
                         line-height: 1.4;
                         display: none;">
                     </div>
-                </div>            
+                </div>
             </div>
-			<div style="height: 30px; width: 100%;"></div>
+            <div style="height: 30px; width: 100%;"></div>
         </div>
         <div id="log-page" class="page">
             <h2>🏋️ Diario Allenamento</h2>
             <input type="date" id="dateLog" onchange="syncDates(this.value)">
             <div class="tab-group">
-                <button class="tab-btn active forza-style" onclick="switchInnerTab('inner-forza', this)">FORZA / SKILL</button>
+                <button class="tab-btn active forza-style" onclick="switchInnerTab('inner-forza', this)">FORZA /
+                    SKILL</button>
                 <button class="tab-btn wod-style" onclick="switchInnerTab('inner-wod', this)">SCORE WOD</button>
             </div>
-            <div id="inner-forza" class="inner-tab"><div class="card"><select id="nameForza"><option value="">-- Seleziona Esercizio --</option>
-                    <option value="Back squat (rack)">Back squat (rack)</option>
-                    <option value="Clean and jerk">Clean and jerk</option>
-                    <option value="Deadlift">Deadlift</option>
-                    <option value="Front squat (da clean)">Front squat (da clean)</option>
-                    <option value="Front squat (rack)">Front squat (rack)</option>
-                    <option value="High hang clean">High hang clean</option>
-                    <option value="High hang snatch">High hang snatch</option>
-                    <option value="Low hang clean">Low hang clean</option>
-                    <option value="Low hang snatch">Low hang snatch</option>
-                    <option value="Overhead squat">Overhead squat</option>
-                    <option value="Power clean">Power clean</option>
-                    <option value="Power snatch">Power snatch</option>
-                    <option value="Push jerk">Push jerk</option>
-                    <option value="Push press">Push press</option>
-                    <option value="Push press + Push jerk">Push press + Push jerk</option>
-                    <option value="Split jerk">Split jerk</option>
-                    <option value="Strict press">Strict press</option>
-                    <option value="Strict press + Push jerk">Strict press + Push jerk</option>
-                    <option value="Thruster">Thruster</option></select><input type="number" id="valForza" placeholder="Peso (kg)" inputmode="decimal"><textarea id="noteForza" placeholder="Note Forza..." oninput="autoResize(this)"></textarea><button class="btn btn-red" onclick="saveEntry('forza')">Salva Forza</button></div></div>
-            <div id="inner-wod" class="inner-tab" style="display:none;"><div class="card" style="border-left-color: var(--neon-blue);"><input type="text" id="wodName" placeholder="Nome WOD"><input type="text" id="wodRes" placeholder="Risultato"><textarea id="wodNote" placeholder="Note WOD..." oninput="autoResize(this)"></textarea><button class="btn btn-blue" onclick="saveEntry('wod')">Salva WOD</button></div></div>
+            <div id="inner-forza" class="inner-tab">
+                <div class="card"><select id="nameForza">
+                        <option value="">-- Seleziona Esercizio --</option>
+                        <option value="Back squat (rack)">Back squat (rack)</option>
+                        <option value="Clean and jerk">Clean and jerk</option>
+                        <option value="Deadlift">Deadlift</option>
+                        <option value="Front squat (da clean)">Front squat (da clean)</option>
+                        <option value="Front squat (rack)">Front squat (rack)</option>
+                        <option value="High hang clean">High hang clean</option>
+                        <option value="High hang snatch">High hang snatch</option>
+                        <option value="Low hang clean">Low hang clean</option>
+                        <option value="Low hang snatch">Low hang snatch</option>
+                        <option value="Overhead squat">Overhead squat</option>
+                        <option value="Power clean">Power clean</option>
+                        <option value="Power snatch">Power snatch</option>
+                        <option value="Push jerk">Push jerk</option>
+                        <option value="Push press">Push press</option>
+                        <option value="Push press + Push jerk">Push press + Push jerk</option>
+                        <option value="Split jerk">Split jerk</option>
+                        <option value="Strict press">Strict press</option>
+                        <option value="Strict press + Push jerk">Strict press + Push jerk</option>
+                        <option value="Thruster">Thruster</option>
+                    </select><input type="number" id="valForza" placeholder="Peso (kg)" inputmode="decimal"><textarea
+                        id="noteForza" placeholder="Note Forza..." oninput="autoResize(this)"></textarea><button
+                        class="btn btn-red" onclick="saveEntry('forza')">Salva Forza</button></div>
+            </div>
+            <div id="inner-wod" class="inner-tab" style="display:none;">
+                <div class="card" style="border-left-color: var(--neon-blue);"><input type="text" id="wodName"
+                        placeholder="Nome WOD"><input type="text" id="wodRes" placeholder="Risultato"><textarea
+                        id="wodNote" placeholder="Note WOD..." oninput="autoResize(this)"></textarea><button
+                        class="btn btn-blue" onclick="saveEntry('wod')">Salva WOD</button></div>
+            </div>
             <div id="historyDisplay"></div>
         </div>
         <div id="meal-page" class="page">
             <h2>🍎 Diario Pasti</h2>
             <input type="date" id="dateMeal" onchange="syncDates(this.value)">
-            <div class="card" style="border-left-color: var(--neon-green);"><input type="text" id="foodName" placeholder="Alimento"><div style="display:flex; gap:10px;"><input type="number" id="foodWeight" placeholder="Grammi"><input type="number" id="foodCal100" placeholder="Cal/100g"></div><button class="btn btn-green" onclick="addFoodLocal()">+ AGGIUNGI</button><div id="temp-meal-summary" style="margin-top:10px; font-size:0.8em; color:var(--neon-green);"></div><button class="btn btn-blue" onclick="saveMealCloud()">SALVA PASTO</button></div>
+            <div class="card" style="border-left-color: var(--neon-green);"><input type="text" id="foodName"
+                    placeholder="Alimento">
+                <div style="display:flex; gap:10px;"><input type="number" id="foodWeight" placeholder="Grammi"><input
+                        type="number" id="foodCal100" placeholder="Cal/100g"></div><button class="btn btn-green"
+                    onclick="addFoodLocal()">+ AGGIUNGI</button>
+                <div id="temp-meal-summary" style="margin-top:10px; font-size:0.8em; color:var(--neon-green);"></div>
+                <button class="btn btn-blue" onclick="saveMealCloud()">SALVA PASTO</button>
+            </div>
             <div id="mealsHistoryDisplay"></div>
         </div>
         <div id="stats-page" class="page">
             <h2>📈 Statistiche</h2>
-        
+            <div class="card" style="border-left-color: #00ff88; margin-top: 20px;">
+                <h3 style="color: #00ff88; margin-bottom:15px; font-size: 0.9em; text-transform: uppercase;">
+                    ⚡ Calcolatore 1RM per Esercizio
+                </h3>
+            
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.7em; color: #888;">ESERCIZIO</label>
+                    <select id="exerciseRM"
+                        style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; border-radius: 5px;">
+                        <option value="">-- Seleziona Esercizio --</option>
+                        <option value="Back squat (rack)">Back squat (rack)</option>
+                        <option value="Clean and jerk">Clean and jerk</option>
+                        <option value="Deadlift">Deadlift</option>
+                        <option value="Front squat (da clean)">Front squat (da clean)</option>
+                        <option value="Front squat (rack)">Front squat (rack)</option>
+                        <option value="High hang clean">High hang clean</option>
+                        <option value="High hang snatch">High hang snatch</option>
+                        <option value="Low hang clean">Low hang clean</option>
+                        <option value="Low hang snatch">Low hang snatch</option>
+                        <option value="Overhead squat">Overhead squat</option>
+                        <option value="Power clean">Power clean</option>
+                        <option value="Power snatch">Power snatch</option>
+                        <option value="Push jerk">Push jerk</option>
+                        <option value="Push press">Push press</option>
+                        <option value="Push press + Push jerk">Push press + Push jerk</option>
+                        <option value="Split jerk">Split jerk</option>
+                        <option value="Strict press">Strict press</option>
+                        <option value="Strict press + Push jerk">Strict press + Push jerk</option>
+                        <option value="Thruster">Thruster</option>
+                    </select>
+                </div>
+            
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <label style="font-size: 0.7em; color: #888;">PESO (KG)</label>
+                        <input type="number" id="weightRM" placeholder="es. 80"
+                            style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; border-radius: 5px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.7em; color: #888;">REPS</label>
+                        <input type="number" id="repsRM" placeholder="es. 5"
+                            style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; border-radius: 5px;">
+                    </div>
+                </div>
+            
+                <button class="btn" style="background: #00ff88; color: black; width: 100%; font-weight: bold;"
+                    onclick="calculate1RM()">
+                    CALCOLA 1RM
+                </button>
+            
+                <div id="resultRM"
+                    style="margin-top: 15px; text-align: center; display: none; padding: 10px; background: rgba(0,255,136,0.05); border-radius: 8px;">
+                    <span id="labelRM" style="font-size: 0.8em; color: #888; text-transform: uppercase;"></span><br>
+                    <strong id="valueRM" style="font-size: 1.8em; color: #00ff88;">--</strong> <span
+                        style="color: #00ff88;">KG</span>
+                </div>
+            </div>
             <div class="card" style="border-left-color: var(--neon-blue);">
                 <h3 style="color: var(--neon-blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase;">
                     Calcolo Percentuali
                 </h3>
                 <input type="number" id="calcWeight" placeholder="Inserisci Kg (es. 100)" oninput="calculatePerc()"
                     style="font-size: 1.2em; text-align: center; border: 1px solid var(--neon-blue); background: rgba(0,0,0,0.2); color: #fff; border-radius: 5px; width: 100%; padding: 10px;">
-        
+
                 <div id="percResult"
                     style="margin-top:15px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center; padding-bottom: 5px;">
                 </div>
             </div>
-        
-            <div class="card" style="margin-bottom: 20px;">
+
+            <div class="card" style="border-left-color: var(--neon-blue);">
+                <h3 style="color: var(--neon-blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase;">
+                    Registro Massimali
+                </h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                     <div style="flex: 1;">
                         <label style="font-size: 0.7em; color: #888; display: block; margin-bottom: 5px;">DA:</label>
@@ -369,27 +606,28 @@
                             style="font-size: 0.8em; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; border-radius: 4px; width: 100%;">
                     </div>
                 </div>
-        
+
                 <select id="exSelect" onchange="initStatsListener()" style="margin-bottom: 10px;"></select>
                 <canvas id="statsChart"></canvas>
             </div>
-        
+
             <div class="card" style="border-left-color: var(--neon-pink);">
                 <button class="btn btn-blue" onclick="exportCSV()">REPORT EXCEL (CSV)</button>
                 <button class="btn btn-red" onclick="exportHTML()">REPORT STORICO (HTML)</button>
                 <button class="btn" style="background: #ffcc00; color: black; margin-bottom: 20px;"
                     onclick="exportJSON()">REPORT JSON (BACKUP)</button>
-        
+
                 <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-        
+
                 <h3 style="color:#ff9900; font-size:0.8em; text-transform: uppercase;">Importa Backup JSON</h3>
                 <input type="file" id="importJsonFile" accept=".json"
                     style="font-size: 0.7em; margin-bottom: 10px; width: 100%;">
-                <button class="btn" style="background:#ff9900; color:white;" onclick="importJSON()">ESEGUI IMPORTAZIONE</button>
+                <button class="btn" style="background:#ff9900; color:white;" onclick="importJSON()">ESEGUI
+                    IMPORTAZIONE</button>
             </div>
-			<div style="height: 30px; width: 100%;"></div>
+            <div style="height: 30px; width: 100%;"></div>
         </div>
-</div>
+    </div>
 
     <script>
         let currentUser = null;
@@ -404,7 +642,7 @@
         async function handleLogin() {
             const e = document.getElementById('login-email').value;
             const p = document.getElementById('login-pass').value;
-            try { await window.signIn(e, p); } catch(err) { document.getElementById('login-error').innerText = "Credenziali errate o account non verificato."; }
+            try { await window.signIn(e, p); } catch (err) { document.getElementById('login-error').innerText = "Credenziali errate o account non verificato."; }
         }
 
         async function handleSignUp() {
@@ -413,12 +651,12 @@
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(e)) { alert("Per favore, inserisci un indirizzo email valido."); return; }
             if (p.length < 6) { alert("La password deve avere almeno 6 caratteri."); return; }
-            try { 
+            try {
                 const userCredential = await window.signUp(e, p);
                 await window.verifyEmail(userCredential.user);
                 alert("REGISTRAZIONE QUASI COMPLETATA: Ti abbiamo inviato una mail di verifica.");
                 await window.logout();
-            } catch(err) { document.getElementById('login-error').innerText = "Errore: " + err.message; }
+            } catch (err) { document.getElementById('login-error').innerText = "Errore: " + err.message; }
         }
 
         async function handleResetPassword() {
@@ -427,75 +665,75 @@
             try { await window.resetPass(email); alert("Email di reset inviata! Controlla la posta."); } catch (err) { alert("Errore: Email non trovata."); }
         }
 
-	function togglePasswordVisibility() {
+        function togglePasswordVisibility() {
             const passInput = document.getElementById('login-pass');
             const eyeIcon = document.getElementById('eye-icon');
-            
+
             if (passInput.type === 'password') {
                 passInput.type = 'text';
                 // Usiamo un simbolo sbarrato che ha lo stesso peso visivo
-                eyeIcon.innerHTML = '⊘'; 
+                eyeIcon.innerHTML = '⊘';
                 eyeIcon.style.color = 'var(--neon-blue)';
             } else {
                 passInput.type = 'password';
-                eyeIcon.innerHTML = '👁'; 
+                eyeIcon.innerHTML = '👁';
                 eyeIcon.style.color = '#ffffff';
             }
         }
 
         async function importJSON() {
-                // Cerchiamo l'input. Se ne hai messi due per sbaglio, questo ne prende uno.
-                const fileInput = document.getElementById('importJsonFile');
-                if (!fileInput || !fileInput.files[0]) {
-                    alert("Seleziona prima un file .json");
-                    return;
-                }
-
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-
-                reader.onload = async (e) => {
-                    try {
-                        const rawData = JSON.parse(e.target.result);
-                        let finalData = {};
-
-                        if (rawData.cf_history) {
-                            const historyArray = JSON.parse(rawData.cf_history);
-                            finalData.history = {};
-                            historyArray.forEach((item, index) => {
-                                const newKey = "import_" + Date.now() + "_" + index;
-                                finalData.history[newKey] = {
-                                    date: item.date,
-                                    name: item.name,
-                                    res: item.res.toString(),
-                                    note: item.note || "",
-                                    type: "forza"
-                                };
-                            });
-                        }
-
-                        if (rawData.cf_plans) {
-                            finalData.plans = JSON.parse(rawData.cf_plans);
-                        }
-
-                        if (confirm("Dati rilevati correttamente. Vuoi sovrascrivere il profilo cloud con questo backup?")) {
-                            await window.dbSet(window.dbRef(window.db, `users/${currentUser.uid}`), finalData);
-                            alert("Importazione completata!");
-                            window.location.reload();
-                        }
-                    } catch (err) {
-                        alert("Errore file: " + err.message);
-                    }
-                };
-                reader.readAsText(file);
+            // Cerchiamo l'input. Se ne hai messi due per sbaglio, questo ne prende uno.
+            const fileInput = document.getElementById('importJsonFile');
+            if (!fileInput || !fileInput.files[0]) {
+                alert("Seleziona prima un file .json");
+                return;
             }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+                try {
+                    const rawData = JSON.parse(e.target.result);
+                    let finalData = {};
+
+                    if (rawData.cf_history) {
+                        const historyArray = JSON.parse(rawData.cf_history);
+                        finalData.history = {};
+                        historyArray.forEach((item, index) => {
+                            const newKey = "import_" + Date.now() + "_" + index;
+                            finalData.history[newKey] = {
+                                date: item.date,
+                                name: item.name,
+                                res: item.res.toString(),
+                                note: item.note || "",
+                                type: "forza"
+                            };
+                        });
+                    }
+
+                    if (rawData.cf_plans) {
+                        finalData.plans = JSON.parse(rawData.cf_plans);
+                    }
+
+                    if (confirm("Dati rilevati correttamente. Vuoi sovrascrivere il profilo cloud con questo backup?")) {
+                        await window.dbSet(window.dbRef(window.db, `users/${currentUser.uid}`), finalData);
+                        alert("Importazione completata!");
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    alert("Errore file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
 
         function showPage(pId, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pId).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            if(pId === 'stats-page') populateExSelect();
+            if (pId === 'stats-page') populateExSelect();
         }
 
         function syncDates(val) {
@@ -521,122 +759,152 @@
                 const p = snap.val();
                 const div = document.getElementById('activePlanDisplay');
                 const ids = ['warmup', 'strength', 'gymnastics', 'mainWod'];
-                if(p) {
+                if (p) {
                     let visual = `<div class="whiteboard">`;
-                    if(p.w) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">WARM-UP</small>${p.w}\n\n`;
-                    if(p.s) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">FORZA / SKILL</small>${p.s}\n\n`;
-                    if(p.g) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">GINNASTICA</small>${p.g}\n\n`;
-                    if(p.m) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">WOD</small>${p.m}`;
+                    if (p.w) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">WARM-UP</small>${p.w}\n\n`;
+                    if (p.s) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">FORZA / SKILL</small>${p.s}\n\n`;
+                    if (p.g) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">GINNASTICA</small>${p.g}\n\n`;
+                    if (p.m) visual += `<small style="color:var(--neon-pink); font-size:0.7em; display:block; margin-bottom:2px;">WOD</small>${p.m}`;
                     visual += `</div>`;
                     div.innerHTML = visual;
                     document.getElementById('warmup').value = p.w || '';
                     document.getElementById('strength').value = p.s || '';
                     document.getElementById('gymnastics').value = p.g || '';
                     document.getElementById('mainWod').value = p.m || '';
-                    setTimeout(() => { ids.forEach(id => { const el = document.getElementById(id); if(el) autoResize(el); }); }, 50);
+                    setTimeout(() => { ids.forEach(id => { const el = document.getElementById(id); if (el) autoResize(el); }); }, 50);
                 } else {
                     div.innerHTML = `<div style="text-align:center; padding:20px; color:#444; font-size:0.8em;">NESSUN PROGRAMMA</div>`;
-                    ids.forEach(id => { const el = document.getElementById(id); if(el) { el.value = ""; el.style.height = '50px'; } });
+                    ids.forEach(id => { const el = document.getElementById(id); if (el) { el.value = ""; el.style.height = '50px'; } });
                 }
             });
         }
 
         function switchInnerTab(tabId, el) { document.querySelectorAll('.inner-tab').forEach(t => t.style.display = 'none'); document.getElementById(tabId).style.display = 'block'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
-        function saveEntry(type) { 
-    const date = document.getElementById('dateLog').value; 
-    let data = { date, type }; 
-    
-    if(type === 'forza') { 
-        data.name = document.getElementById('nameForza').value; 
-        data.res = document.getElementById('valForza').value; 
-        data.note = document.getElementById('noteForza').value; 
-    } else { 
-        data.name = document.getElementById('wodName').value; 
-        data.res = document.getElementById('wodRes').value; 
-        data.note = document.getElementById('wodNote').value; 
-    } 
+        function saveEntry(type) {
+            const date = document.getElementById('dateLog').value;
+            let data = { date, type };
 
-    // Verifica se i campi sono vuoti
-    if(!data.name || !data.res) {
-        alert("Inserisci sia il nome che il risultato!");
-        return;
-    }
+            if (type === 'forza') {
+                data.name = document.getElementById('nameForza').value;
+                data.res = document.getElementById('valForza').value;
+                data.note = document.getElementById('noteForza').value;
+            } else {
+                data.name = document.getElementById('wodName').value;
+                data.res = document.getElementById('wodRes').value;
+                data.note = document.getElementById('wodNote').value;
+            }
 
-    // Salvataggio su Firebase
-    window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/history`), data); 
+            // Verifica se i campi sono vuoti
+            if (!data.name || !data.res) {
+                alert("Inserisci sia il nome che il risultato!");
+                return;
+            }
 
-    // PULIZIA CAMPI: Fondamentale per capire che il salvataggio è avvenuto
-    if(type === 'forza') {
-        document.getElementById('valForza').value = "";
-        document.getElementById('noteForza').value = "";
-    } else {
-        document.getElementById('wodName').value = "";
-        document.getElementById('wodRes').value = "";
-        document.getElementById('wodNote').value = "";
-    }
-}
-        function loadHistory(date) { 
-    window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { 
-        const data = snap.val(); 
-        const display = document.getElementById('historyDisplay'); 
-        display.innerHTML = ""; 
-        
-        if(data) { 
-            Object.keys(data).reverse().forEach(key => { 
-                const item = data[key]; 
-                if(item.date === date) { 
-                    const borderColor = (item.type === 'wod') ? 'var(--neon-blue)' : 'var(--neon-pink)';
-                    const label = (item.type === 'wod') ? 'WOD' : 'FORZA / SKILL';
+            // Salvataggio su Firebase
+            window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/history`), data);
 
-                    display.innerHTML += `
+            // PULIZIA CAMPI: Fondamentale per capire che il salvataggio è avvenuto
+            if (type === 'forza') {
+                document.getElementById('valForza').value = "";
+                document.getElementById('noteForza').value = "";
+            } else {
+                document.getElementById('wodName').value = "";
+                document.getElementById('wodRes').value = "";
+                document.getElementById('wodNote').value = "";
+            }
+        }
+        function loadHistory(date) {
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+                const data = snap.val();
+                const display = document.getElementById('historyDisplay');
+                display.innerHTML = "";
+
+                if (data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        const item = data[key];
+                        if (item.date === date) {
+                            const borderColor = (item.type === 'wod') ? 'var(--neon-blue)' : 'var(--neon-pink)';
+                            const label = (item.type === 'wod') ? 'WOD' : 'FORZA / SKILL';
+
+                            display.innerHTML += `
     					<div class="log-entry" style="border-left: 4px solid ${borderColor};">
         					<button class="btn-del" onclick="deleteItem('history/${key}')">×</button>
         					<small style="color:${borderColor}; font-size:0.7em; text-transform:uppercase; display:block; margin-bottom:2px;">${label}</small>
         					<b style="font-size:1.1em; color:#fff; display:block;">${item.name}: ${item.res}</b>
         					<div style="color:rgba(255,255,255,0.9);">${item.note || ''}</div>
-    					</div>`; 
-                	} 
-            	}); 
-        	} 
-    	}); 
-	}
+    					</div>`;
+                        }
+                    });
+                }
+            });
+        }
+
+        function calculate1RM() {
+                const exercise = document.getElementById('exerciseRM').value;
+                const weight = parseFloat(document.getElementById('weightRM').value);
+                const reps = parseInt(document.getElementById('repsRM').value);
+
+                const resultDiv = document.getElementById('resultRM');
+                const valueDisplay = document.getElementById('valueRM');
+                const labelDisplay = document.getElementById('labelRM');
+
+                if (weight > 0 && reps > 0) {
+                    let oneRM;
+                    if (reps === 1) {
+                        oneRM = weight;
+                    } else {
+                        // Formula di Brzycki
+                        oneRM = weight / (1.0278 - (0.0278 * reps));
+                    }
+
+                    const finalValue = Math.round(oneRM);
+
+                    // Mostriamo il risultato con il nome dell'esercizio
+                    labelDisplay.innerText = `Massimale stimato per ${exercise}:`;
+                    valueDisplay.innerText = finalValue;
+                    resultDiv.style.display = 'block';
+                } else {
+                    alert("Per favore, inserisci peso e ripetizioni.");
+                }
+            }
+
 
         function calculatePerc() {
-                const weight = document.getElementById('calcWeight').value;
-                const display = document.getElementById('percResult');
+            const weight = document.getElementById('calcWeight').value;
+            const display = document.getElementById('percResult');
 
-                if (!weight || weight <= 0) {
-                    display.innerHTML = "";
-                    display.style.marginBottom = "0px"; // Reset dello spazio se vuoto
-                    return;
-                }
+            if (!weight || weight <= 0) {
+                display.innerHTML = "";
+                display.style.marginBottom = "0px"; // Reset dello spazio se vuoto
+                return;
+            }
 
-                display.style.marginBottom = "15px"; // Lo spazio richiesto tra righe e grafico
+            display.style.marginBottom = "15px"; // Lo spazio richiesto tra righe e grafico
 
-                const percentages = [60, 65, 70, 75, 80, 85, 90, 95];
-                let html = "";
+            const percentages = [60, 65, 70, 75, 80, 85, 90, 95];
+            let html = "";
 
-                percentages.forEach(p => {
-                    const calc = (weight * (p / 100)).toFixed(1);
-                    const color = p >= 90 ? 'var(--neon-pink)' : 'var(--neon-blue)';
-                    html += `
+            percentages.forEach(p => {
+                const calc = (weight * (p / 100)).toFixed(1);
+                const color = p >= 90 ? 'var(--neon-pink)' : 'var(--neon-blue)';
+                html += `
             <div style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
                 <div style="color: ${color}; font-size: 0.7em; font-weight: bold;">${p}%</div>
                 <div style="font-size: 0.9em; font-weight: bold; color: #fff;">${calc}</div>
             </div>`;
-                });
+            });
 
-                display.innerHTML = html;
-            }
+            display.innerHTML = html;
+        }
 
-        function addFoodLocal() { const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value; if(n && w && c) { tempItems.push({n, kcal: Math.round((w*c)/100)}); document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", "); document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = ""; } }
-        function saveMealCloud() { const date = document.getElementById('dateMeal').value; const total = tempItems.reduce((s,x)=>s+x.kcal,0); if(total === 0) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') }); tempItems = []; document.getElementById('temp-meal-summary').innerText = ""; }
-        function loadMeals(date) { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/meals`), snap => { const data = snap.val(); const display = document.getElementById('mealsHistoryDisplay'); display.innerHTML = ""; if(data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if(item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color:var(--neon-green)"><button class="btn-del" onclick="deleteItem('meals/${key}')">×</button><b>Energia</b>: ${item.total} kcal<br><small>${item.desc}</small></div>`; } }); } }); }
-        function populateExSelect() { 
-            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => { 
-                const data = snap.val(); 
-                const sel = document.getElementById('exSelect'); 
-                if(!data) return; 
+        function addFoodLocal() { const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value; if (n && w && c) { tempItems.push({ n, kcal: Math.round((w * c) / 100) }); document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", "); document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = ""; } }
+        function saveMealCloud() { const date = document.getElementById('dateMeal').value; const total = tempItems.reduce((s, x) => s + x.kcal, 0); if (total === 0) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') }); tempItems = []; document.getElementById('temp-meal-summary').innerText = ""; }
+        function loadMeals(date) { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/meals`), snap => { const data = snap.val(); const display = document.getElementById('mealsHistoryDisplay'); display.innerHTML = ""; if (data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if (item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color:var(--neon-green)"><button class="btn-del" onclick="deleteItem('meals/${key}')">×</button><b>Energia</b>: ${item.total} kcal<br><small>${item.desc}</small></div>`; } }); } }); }
+        function populateExSelect() {
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+                const data = snap.val();
+                const sel = document.getElementById('exSelect');
+                if (!data) return;
 
                 // 1. Estraiamo i nomi unici
                 let names = [...new Set(Object.values(data)
@@ -644,124 +912,124 @@
                     .map(x => x.name))];
 
                 // 2. AGGIUNGI QUESTA RIGA: Ordina i nomi alfabeticamente
-                names.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+                names.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
                 // 3. Popoliamo la select
-                sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join(''); 
-                initStatsListener(); 
-            }, { onlyOnce: true }); 
+                sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+                initStatsListener();
+            }, { onlyOnce: true });
         }
-    function initStatsListener() {
-        const exName = document.getElementById('exSelect').value;
-        // Recuperiamo i valori delle date
-        const dateFrom = document.getElementById('statsDateFrom').value;
-        const dateTo = document.getElementById('statsDateTo').value;
+        function initStatsListener() {
+            const exName = document.getElementById('exSelect').value;
+            // Recuperiamo i valori delle date
+            const dateFrom = document.getElementById('statsDateFrom').value;
+            const dateTo = document.getElementById('statsDateTo').value;
 
-        window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
-            const data = snap.val();
-            if (!data) return;
+            window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/history`), snap => {
+                const data = snap.val();
+                if (!data) return;
 
-            // 1. Filtriamo per nome esercizio
-            let historyArr = Object.values(data).filter(i => i.name === exName);
+                // 1. Filtriamo per nome esercizio
+                let historyArr = Object.values(data).filter(i => i.name === exName);
 
-            // 2. APPLICHIAMO I FILTRI DATA (se inseriti)
-            if (dateFrom) {
-                historyArr = historyArr.filter(i => i.date >= dateFrom);
-            }
-            if (dateTo) {
-                historyArr = historyArr.filter(i => i.date <= dateTo);
-            }
+                // 2. APPLICHIAMO I FILTRI DATA (se inseriti)
+                if (dateFrom) {
+                    historyArr = historyArr.filter(i => i.date >= dateFrom);
+                }
+                if (dateTo) {
+                    historyArr = historyArr.filter(i => i.date <= dateTo);
+                }
 
-            // 3. Ordiniamo i dati per data (dal più vecchio al più recente)
-            historyArr.sort((a, b) => new Date(a.date) - new Date(b.date));
+                // 3. Ordiniamo i dati per data (dal più vecchio al più recente)
+                historyArr.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            const labels = historyArr.map(i => i.date.split('-').reverse().join('/'));
-            const values = historyArr.map(i => parseFloat(i.res));
+                const labels = historyArr.map(i => i.date.split('-').reverse().join('/'));
+                const values = historyArr.map(i => parseFloat(i.res));
 
-            // 4. Distruggiamo il grafico precedente prima di crearne uno nuovo
-            if (myChart) myChart.destroy();
+                // 4. Distruggiamo il grafico precedente prima di crearne uno nuovo
+                if (myChart) myChart.destroy();
 
-            myChart = new Chart(document.getElementById('statsChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: exName,
-                        data: values,
-                        borderColor: '#00f2ff',
-                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: { grid: { color: '#222' }, ticks: { color: '#888' } },
-                        x: { grid: { color: '#222' }, ticks: { color: '#888' } }
+                myChart = new Chart(document.getElementById('statsChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: exName,
+                            data: values,
+                            borderColor: '#00f2ff',
+                            backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
                     },
-                    plugins: {
-                        legend: { display: false } // Nascondiamo la legenda per pulizia
+                    options: {
+                        scales: {
+                            y: { grid: { color: '#222' }, ticks: { color: '#888' } },
+                            x: { grid: { color: '#222' }, ticks: { color: '#888' } }
+                        },
+                        plugins: {
+                            legend: { display: false } // Nascondiamo la legenda per pulizia
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
         function toggleBenchmarks() {
-                const content = document.getElementById('benchmarkContent');
-                const arrow = document.getElementById('benchArrow');
-                if (content.style.display === 'none') {
-                    content.style.display = 'block';
-                    arrow.style.transform = 'rotate(180deg)';
-                } else {
-                    content.style.display = 'none';
-                    arrow.style.transform = 'rotate(0deg)';
-                }
+            const content = document.getElementById('benchmarkContent');
+            const arrow = document.getElementById('benchArrow');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
             }
+        }
 
-            function updateBenchmarkText() {
-                    const data = {
-                        // GIRLS
-                        "fran": { t: "FRAN", type: "girl", d: "<b>21-15-9:</b><br>• Thrusters (43/30kg)<br>• Pull-ups" },
-                        "cindy": { t: "CINDY", type: "girl", d: "<b>AMRAP 20':</b><br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Squats" },
-                        "grace": { t: "GRACE", type: "girl", d: "<b>For Time:</b><br>• 30 Clean & Jerks (61/43kg)" },
-                        "annie": { t: "ANNIE", type: "girl", d: "<b>50-40-30-20-10:</b><br>• Double-unders<br>• Sit-ups" },
-                        "diane": { t: "DIANE", type: "girl", d: "<b>21-15-9:</b><br>• Deadlift (102/70kg)<br>• HSPU" },
-                        "elizabeth": { t: "ELIZABETH", type: "girl", d: "<b>21-15-9:</b><br>• Cleans (61/43kg)<br>• Ring Dips" },
-                        "isabel": { t: "ISABEL", type: "girl", d: "<b>For Time:</b><br>• 30 Snatches (61/43kg)" },
+        function updateBenchmarkText() {
+            const data = {
+                // GIRLS
+                "fran": { t: "FRAN", type: "girl", d: "<b>21-15-9:</b><br>• Thrusters (43/30kg)<br>• Pull-ups" },
+                "cindy": { t: "CINDY", type: "girl", d: "<b>AMRAP 20':</b><br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Squats" },
+                "grace": { t: "GRACE", type: "girl", d: "<b>For Time:</b><br>• 30 Clean & Jerks (61/43kg)" },
+                "annie": { t: "ANNIE", type: "girl", d: "<b>50-40-30-20-10:</b><br>• Double-unders<br>• Sit-ups" },
+                "diane": { t: "DIANE", type: "girl", d: "<b>21-15-9:</b><br>• Deadlift (102/70kg)<br>• HSPU" },
+                "elizabeth": { t: "ELIZABETH", type: "girl", d: "<b>21-15-9:</b><br>• Cleans (61/43kg)<br>• Ring Dips" },
+                "isabel": { t: "ISABEL", type: "girl", d: "<b>For Time:</b><br>• 30 Snatches (61/43kg)" },
 
-                        // HEROES
-                        "murph": { t: "MURPH", type: "hero", d: "<b>For Time:</b><br>• 1.6km Run<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Squats<br>• 1.6km Run" },
-                        "dt": { t: "DT", type: "hero", d: "<b>5 Rounds:</b><br>• 12 DL (70/47kg)<br>• 9 Hang Power Clean<br>• 6 Push Jerk" }
-                    };
+                // HEROES
+                "murph": { t: "MURPH", type: "hero", d: "<b>For Time:</b><br>• 1.6km Run<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Squats<br>• 1.6km Run" },
+                "dt": { t: "DT", type: "hero", d: "<b>5 Rounds:</b><br>• 12 DL (70/47kg)<br>• 9 Hang Power Clean<br>• 6 Push Jerk" }
+            };
 
-                    const val = document.getElementById('benchmarkSelect').value;
-                    const det = document.getElementById('benchmarkDetails');
+            const val = document.getElementById('benchmarkSelect').value;
+            const det = document.getElementById('benchmarkDetails');
 
-                    if (val && data[val]) {
-                        const wod = data[val];
-                        // Scegliamo il colore in base al tipo
-                        const color = (wod.type === 'hero') ? '#ff9900' : 'var(--neon-pink)';
-                        const label = (wod.type === 'hero') ? 'HERO WOD' : 'GIRL BENCHMARK';
+            if (val && data[val]) {
+                const wod = data[val];
+                // Scegliamo il colore in base al tipo
+                const color = (wod.type === 'hero') ? '#ff9900' : 'var(--neon-pink)';
+                const label = (wod.type === 'hero') ? 'HERO WOD' : 'GIRL BENCHMARK';
 
-                        det.style.display = 'block';
-                        det.style.borderLeft = `3px solid ${color}`; // Aggiungiamo un bordino laterale colorato
-                        det.innerHTML = `
+                det.style.display = 'block';
+                det.style.borderLeft = `3px solid ${color}`; // Aggiungiamo un bordino laterale colorato
+                det.innerHTML = `
             <small style="color:${color}; font-size:0.7em; letter-spacing:1px;">${label}</small><br>
             <b style="color:${color}; font-size:1.1em;">${wod.t}</b><br>
             <p style="margin:5px 0 0; font-size:0.9em; line-height:1.4;">${wod.d}</p>
         `;
-                    } else {
-                        det.style.display = 'none';
-                    }
-                }
-        window.deleteItem = (path) => { if(confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${currentUser.uid}/${path}`)); }
-        async function exportCSV() { const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const data = snap.val(); if (!data) return; const history = Object.values(data); const csv = ["Data,Esercizio,Risultato,Note", ...history.map(e => `${e.date},"${e.name}",${e.res},"${(e.note || "")}"`)].join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = `report.csv`; link.click(); }
-        async function exportHTML() { const hSnap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const history = hSnap.val(); if (!history) return; let html = `<html><body style="background:#050505;color:#fff;"><h1>Report</h1>`; Object.values(history).forEach(h => { html += `<div style="border-left:4px solid #00f2ff;padding:10px;margin:10px;">${h.date} - ${h.name}: ${h.res}</div>`; }); html += `</body></html>`; const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([html], {type:'text/html'})); link.download = `report.html`; link.click(); }
-	async function exportJSON() {
+            } else {
+                det.style.display = 'none';
+            }
+        }
+        window.deleteItem = (path) => { if (confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${currentUser.uid}/${path}`)); }
+        async function exportCSV() { const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const data = snap.val(); if (!data) return; const history = Object.values(data); const csv = ["Data,Esercizio,Risultato,Note", ...history.map(e => `${e.date},"${e.name}",${e.res},"${(e.note || "")}"`)].join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = `report.csv`; link.click(); }
+        async function exportHTML() { const hSnap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}/history`)); const history = hSnap.val(); if (!history) return; let html = `<html><body style="background:#050505;color:#fff;"><h1>Report</h1>`; Object.values(history).forEach(h => { html += `<div style="border-left:4px solid #00f2ff;padding:10px;margin:10px;">${h.date} - ${h.name}: ${h.res}</div>`; }); html += `</body></html>`; const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); link.download = `report.html`; link.click(); }
+        async function exportJSON() {
             try {
                 const snap = await window.dbGet(window.dbRef(window.db, `users/${currentUser.uid}`));
                 const data = snap.val();
-                
+
                 if (!data) {
                     alert("Nessun dato da esportare.");
                     return;
@@ -778,14 +1046,11 @@
             }
         }
     </script>
-	<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
+
 </html>
-
-
-
-
