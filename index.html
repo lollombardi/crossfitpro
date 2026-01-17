@@ -282,8 +282,8 @@
                     <option value="Split jerk">Split jerk</option>
                     <option value="Strict press">Strict press</option>
                     <option value="Strict press + Push jerk">Strict press + Push jerk</option>
-                    <option value="Thruster">Thruster</option></select><input type="number" id="valForza" placeholder="Peso (kg)" inputmode="decimal"><textarea id="noteForza" placeholder="Note Forza..."></textarea><button class="btn btn-red" onclick="saveEntry('forza')">Salva Forza</button></div></div>
-            <div id="inner-wod" class="inner-tab" style="display:none;"><div class="card" style="border-left-color: var(--neon-blue);"><input type="text" id="wodName" placeholder="Nome WOD"><input type="text" id="wodRes" placeholder="Risultato"><textarea id="wodNote" placeholder="Note WOD..."></textarea><button class="btn btn-blue" onclick="saveEntry('wod')">Salva WOD</button></div></div>
+                    <option value="Thruster">Thruster</option></select><input type="number" id="valForza" placeholder="Peso (kg)" inputmode="decimal"><textarea id="noteForza" placeholder="Note Forza..." oninput="autoResize(this)"></textarea><button class="btn btn-red" onclick="saveEntry('forza')">Salva Forza</button></div></div>
+            <div id="inner-wod" class="inner-tab" style="display:none;"><div class="card" style="border-left-color: var(--neon-blue);"><input type="text" id="wodName" placeholder="Nome WOD"><input type="text" id="wodRes" placeholder="Risultato"><textarea id="wodNote" placeholder="Note WOD..." oninput="autoResize(this)"></textarea><button class="btn btn-blue" onclick="saveEntry('wod')">Salva WOD</button></div></div>
             <div id="historyDisplay"></div>
         </div>
         <div id="meal-page" class="page">
@@ -573,6 +573,7 @@
 </script>
 </body>
 </html>
+
 
 
 
