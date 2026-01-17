@@ -295,19 +295,35 @@
         </div>
         <div id="stats-page" class="page">
             <h2>📈 Statistiche</h2>
-            <div class="card"><select id="exSelect" onchange="initStatsListener()"></select><canvas id="statsChart"></canvas></div>
+        
+            <div class="card" style="border-left-color: var(--neon-blue); margin-bottom: 20px;">
+                <h3 style="color: var(--neon-blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase;">
+                    Calcolo Percentuali
+                </h3>
+                <input type="number" id="calcWeight" placeholder="Inserisci Kg (es. 100)" oninput="calculatePerc()"
+                    style="font-size: 1.2em; text-align: center; border: 1px solid var(--neon-blue); background: rgba(0,0,0,0.2); color: #fff; border-radius: 5px; width: 100%; padding: 10px;">
+        
+                <div id="percResult" style="margin-top:15px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center; padding-bottom: 5px;">
+                    </div>
+            </div>
+        
+            <div class="card" style="margin-bottom: 20px;">
+                <select id="exSelect" onchange="initStatsListener()"></select>
+                <canvas id="statsChart"></canvas>
+            </div>
+        
             <div class="card" style="border-left-color: var(--neon-pink);">
                 <button class="btn btn-blue" onclick="exportCSV()">REPORT EXCEL (CSV)</button>
                 <button class="btn btn-red" onclick="exportHTML()">REPORT STORICO (HTML)</button>
-		<button class="btn" style="background: #ffcc00; color: black;" onclick="exportJSON()">REPORT JSON (BACKUP)</button>
-            </div>
-            <div class="card" style="border-left-color: #ff9900; margin-top: 20px;">
-                <h3 style="color:#ff9900; font-size:0.8em; margin-top:0;">IMPORTA BACKUP JSON</h3>
-                <input type="file" id="importJsonFile" accept=".json" style="font-size: 0.7em;">
+                <button class="btn" style="background: #ffcc00; color: black; margin-bottom: 20px;" onclick="exportJSON()">REPORT JSON (BACKUP)</button>
+                
+                <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+                
+                <h3 style="color:#ff9900; font-size:0.8em; text-transform: uppercase;">Importa Backup JSON</h3>
+                <input type="file" id="importJsonFile" accept=".json" style="font-size: 0.7em; margin-bottom: 10px; width: 100%;">
                 <button class="btn" style="background:#ff9900; color:white;" onclick="importJSON()">ESEGUI IMPORTAZIONE</button>
             </div>
         </div>
-    </div>
 
     <script>
         let currentUser = null;
@@ -362,51 +378,51 @@
         }
 
         async function importJSON() {
-    const fileInput = document.getElementById('importJsonFile');
-    if (!fileInput.files[0]) { alert("Seleziona prima un file .json"); return; }
-    
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = async (e) => {
-        try {
-            const rawData = JSON.parse(e.target.result);
-            let finalData = {};
+                // Cerchiamo l'input. Se ne hai messi due per sbaglio, questo ne prende uno.
+                const fileInput = document.getElementById('importJsonFile');
+                if (!fileInput || !fileInput.files[0]) {
+                    alert("Seleziona prima un file .json");
+                    return;
+                }
 
-            // Conversione HISTORY (da stringa a oggetto)
-            if (rawData.cf_history) {
-                const historyArray = JSON.parse(rawData.cf_history);
-                finalData.history = {};
-                historyArray.forEach((item, index) => {
-                    // Creiamo una chiave univoca per ogni record
-                    const newKey = "import_" + Date.now() + "_" + index;
-                    finalData.history[newKey] = {
-                        date: item.date,
-                        name: item.name,
-                        res: item.res.toString(),
-                        note: item.note || "",
-                        type: "forza" // Default per i dati importati
-                    };
-                });
-            }
+                const file = fileInput.files[0];
+                const reader = new FileReader();
 
-            // Conversione PLANS (da stringa a oggetto)
-            if (rawData.cf_plans) {
-                finalData.plans = JSON.parse(rawData.cf_plans);
-            }
+                reader.onload = async (e) => {
+                    try {
+                        const rawData = JSON.parse(e.target.result);
+                        let finalData = {};
 
-            if (confirm("Dati rilevati correttamente. Vuoi procedere con l'importazione sul tuo profilo cloud?")) {
-                await window.dbSet(window.dbRef(window.db, `users/${currentUser.uid}`), finalData);
-                alert("Importazione completata con successo!");
-                window.location.reload();
+                        if (rawData.cf_history) {
+                            const historyArray = JSON.parse(rawData.cf_history);
+                            finalData.history = {};
+                            historyArray.forEach((item, index) => {
+                                const newKey = "import_" + Date.now() + "_" + index;
+                                finalData.history[newKey] = {
+                                    date: item.date,
+                                    name: item.name,
+                                    res: item.res.toString(),
+                                    note: item.note || "",
+                                    type: "forza"
+                                };
+                            });
+                        }
+
+                        if (rawData.cf_plans) {
+                            finalData.plans = JSON.parse(rawData.cf_plans);
+                        }
+
+                        if (confirm("Dati rilevati correttamente. Vuoi sovrascrivere il profilo cloud con questo backup?")) {
+                            await window.dbSet(window.dbRef(window.db, `users/${currentUser.uid}`), finalData);
+                            alert("Importazione completata!");
+                            window.location.reload();
+                        }
+                    } catch (err) {
+                        alert("Errore file: " + err.message);
+                    }
+                };
+                reader.readAsText(file);
             }
-        } catch (err) { 
-            console.error(err);
-            alert("Errore durante la conversione del file: " + err.message); 
-        }
-    };
-    reader.readAsText(file);
-}
 
         function showPage(pId, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -518,6 +534,35 @@
         	} 
     	}); 
 	}
+
+        function calculatePerc() {
+                const weight = document.getElementById('calcWeight').value;
+                const display = document.getElementById('percResult');
+
+                if (!weight || weight <= 0) {
+                    display.innerHTML = "";
+                    display.style.marginBottom = "0px"; // Reset dello spazio se vuoto
+                    return;
+                }
+
+                display.style.marginBottom = "15px"; // Lo spazio richiesto tra righe e grafico
+
+                const percentages = [60, 65, 70, 75, 80, 85, 90, 95];
+                let html = "";
+
+                percentages.forEach(p => {
+                    const calc = (weight * (p / 100)).toFixed(1);
+                    const color = p >= 90 ? 'var(--neon-pink)' : 'var(--neon-blue)';
+                    html += `
+            <div style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="color: ${color}; font-size: 0.7em; font-weight: bold;">${p}%</div>
+                <div style="font-size: 0.9em; font-weight: bold; color: #fff;">${calc}</div>
+            </div>`;
+                });
+
+                display.innerHTML = html;
+            }
+
         function addFoodLocal() { const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value; if(n && w && c) { tempItems.push({n, kcal: Math.round((w*c)/100)}); document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", "); document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = ""; } }
         function saveMealCloud() { const date = document.getElementById('dateMeal').value; const total = tempItems.reduce((s,x)=>s+x.kcal,0); if(total === 0) return; window.dbPush(window.dbRef(window.db, `users/${currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') }); tempItems = []; document.getElementById('temp-meal-summary').innerText = ""; }
         function loadMeals(date) { window.dbOnValue(window.dbRef(window.db, `users/${currentUser.uid}/meals`), snap => { const data = snap.val(); const display = document.getElementById('mealsHistoryDisplay'); display.innerHTML = ""; if(data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if(item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color:var(--neon-green)"><button class="btn-del" onclick="deleteItem('meals/${key}')">×</button><b>Energia</b>: ${item.total} kcal<br><small>${item.desc}</small></div>`; } }); } }); }
@@ -572,18 +617,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
