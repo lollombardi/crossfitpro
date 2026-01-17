@@ -507,13 +507,11 @@
                     const label = (item.type === 'wod') ? 'WOD' : 'FORZA / SKILL';
 
                     display.innerHTML += `
-    					<div class="log-entry" style="border-left: 4px solid ${borderColor}">
+    					<div class="log-entry" style="border-left: 4px solid ${borderColor};">
         					<button class="btn-del" onclick="deleteItem('history/${key}')">×</button>
-        					<small style="color:${borderColor}; font-size:0.7em; text-transform:uppercase; margin-bottom:5px;">${label}</small>
-        					<div style="width:100%;">
-								<b style="font-size:1.1em; color:#fff; display:block; margin-bottom:5px;">${item.name}: ${item.res}</b>
-            					<div style="font-size:0.95em; color:rgba(255,255,255,0.9);">${item.note || ''}</div>
-							</div>
+        					<small style="color:${borderColor}; font-size:0.7em; text-transform:uppercase; display:block; margin-bottom:2px;">${label}</small>
+        					<b style="font-size:1.1em; color:#fff; display:block;">${item.name}: ${item.res}</b>
+        					<div style="color:rgba(255,255,255,0.9);">${item.note || ''}</div>
     					</div>`; 
                 	} 
             	}); 
@@ -574,6 +572,7 @@
 </script>
 </body>
 </html>
+
 
 
 
