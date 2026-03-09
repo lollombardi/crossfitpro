@@ -572,7 +572,7 @@
 
         <div id="plan-page" class="page fade-in">
             <h2 class="font-black text-xl mb-4" style="color: var(--text);">📋 Lavagna</h2>
-            <input type="date" id="datePlan" onchange="syncDates(this.value)" style="width: 100% !important; min-width: 0 !important; flex: 1; box-sizing: border-box; -webkit-appearance: none; appearance: none; padding: 8px;">
+            <input type="date" id="datePlan" onchange="syncDates(this.value)" style="width: 100%; box-sizing: border-box; max-width: 100%; padding: 8px;">
             <div id="activePlanDisplay"></div>
 
             <div class="card" style="border-left-color: var(--text-light);">
@@ -670,7 +670,7 @@
 
         <div id="log-page" class="page hidden fade-in">
             <h2 class="font-black text-xl mb-4" style="color: var(--text);">🏋️ Diario Allenamento</h2>
-            <input type="date" id="dateLog" onchange="syncDates(this.value)">
+            <input type="date" id="dateLog" onchange="syncDates(this.value)" style="width: 100% !important; min-width: 0 !important; flex: 1; box-sizing: border-box; -webkit-appearance: none; appearance: none; padding: 8px;">
 
             <div class="tab-group">
                 <button class="tab-btn active forza-style" onclick="switchInnerTab('inner-forza', this)">FORZA /
@@ -780,7 +780,7 @@
 
         <div id="meal-page" class="page hidden fade-in">
             <h2 class="font-black text-xl mb-4" style="color: var(--text);">🍎 Diario Pasti</h2>
-            <input type="date" id="dateMeal" onchange="syncDates(this.value)">
+            <input type="date" id="dateMeal" onchange="syncDates(this.value)" style="width: 100% !important; min-width: 0 !important; flex: 1; box-sizing: border-box; -webkit-appearance: none; appearance: none; padding: 8px;">
             <div class="card" style="border-left-color: var(--green);">
                 <input type="text" id="foodName" placeholder="Alimento" style="margin: 0.25rem 0;">
                 <div style="display:flex; gap:10px;">
@@ -1177,4 +1177,3 @@
 </body>
 
 </html>
-
