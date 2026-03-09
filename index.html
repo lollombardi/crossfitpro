@@ -182,17 +182,17 @@
 
         .log-entry {
             background: var(--card-bg);
-            color: var(--text);
-            padding: 15px;
-            margin-top: 10px;
-            border: 1px solid var(--border);
-            border-radius: 1rem;
-            border-left-width: 4px;
+            padding: 15px !important;
+            border-radius: 8px;
+            margin-bottom: 10px;
             position: relative;
-            white-space: pre-wrap;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: background-color 0.3s, color 0.3s;
-        }
+            border-left: 4px solid;
+            /* --- MODIFICHE PER ADATTAMENTO ALTEZZA --- */
+            height: auto !important;         /* Rimuove qualsiasi altezza fissa */
+            min-height: 0 !important;        /* Rimuove altezze minime eccessive */
+            display: block !important;       /* Evita che si allunghi in un contenitore flex/grid */
+            overflow: hidden;                /* Mantiene tutto pulito dentro i bordi */
+        }   
 
         .btn-del {
             position: absolute;
