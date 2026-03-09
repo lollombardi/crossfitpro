@@ -858,16 +858,19 @@
                 <h3 style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
                     Registro Massimali</h3>
             
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div style="min-width: 0;">
-                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block;">DA:</label>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <div style="width: 47%;">
+                        <label
+                            style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display:block; margin-bottom:4px;">DA:</label>
                         <input type="date" id="statsDateFrom" onchange="initStatsListener()"
-                            style="padding: 8px !important; font-size: 0.85em; width: 100% !important; box-sizing: border-box !important;">
+                            style="width: 100%; box-sizing: border-box; padding: 8px 4px; font-size: 0.8em;">
                     </div>
-                    <div style="min-width: 0;">
-                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block;">A:</label>
+                
+                    <div style="width: 47%;">
+                        <label
+                            style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display:block; margin-bottom:4px;">A:</label>
                         <input type="date" id="statsDateTo" onchange="initStatsListener()"
-                            style="padding: 8px !important; font-size: 0.85em; width: 100% !important; box-sizing: border-box !important;">
+                            style="width: 100%; box-sizing: border-box; padding: 8px 4px; font-size: 0.8em;">
                     </div>
                 </div>
             
