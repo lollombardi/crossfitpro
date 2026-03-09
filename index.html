@@ -855,21 +855,22 @@
             </div>
 
             <div class="card" style="border-left-color: var(--blue);">
-                <h3
-                    style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
+                <h3 style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
                     Registro Massimali</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                     <div style="min-width: 0;">
-                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">DA:</label>
+                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block;">DA:</label>
                         <input type="date" id="statsDateFrom" onchange="initStatsListener()"
-                            style="padding: 8px !important; font-size: 0.85em; margin-bottom: 10px !important;">
+                            style="padding: 8px !important; font-size: 0.85em; width: 100% !important; box-sizing: border-box !important;">
                     </div>
                     <div style="min-width: 0;">
-                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">A:</label>
+                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block;">A:</label>
                         <input type="date" id="statsDateTo" onchange="initStatsListener()"
-                            style="padding: 8px !important; font-size: 0.85em; margin-bottom: 10px !important;">
+                            style="padding: 8px !important; font-size: 0.85em; width: 100% !important; box-sizing: border-box !important;">
                     </div>
                 </div>
+            
                 <select id="exSelect" onchange="initStatsListener()" style="margin-bottom: 10px;"></select>
                 <canvas id="statsChart"></canvas>
             </div>
@@ -1172,6 +1173,4 @@
     </script>
 </body>
 
-
 </html>
-
