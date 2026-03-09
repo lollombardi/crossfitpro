@@ -855,24 +855,18 @@
 
             <div class="card" style="border-left-color: var(--blue);">
                 <h3 style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
-                    Registro Massimali</h3>
-            
-                <div style="display: flex; gap: 15px; margin-bottom: 15px; width: 100%;">
-                    <div style="flex: 1; min-width: 0;">
-                        <label
-                            style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block; margin-bottom: 4px;">DA:</label>
-                        <input type="date" id="statsDateFrom" onchange="initStatsListener()"
-                            style="width: 100% !important; box-sizing: border-box !important; padding: 8px; font-size: 0.85em; min-width: 0;">
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <label
-                            style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block; margin-bottom: 4px;">A:</label>
-                        <input type="date" id="statsDateTo" onchange="initStatsListener()"
-                            style="width: 100% !important; box-sizing: border-box !important; padding: 8px; font-size: 0.85em; min-width: 0;">
-                    </div>
-                </div>
-            
-                <select id="exSelect" onchange="initStatsListener()" style="margin-bottom: 10px;"></select>
+                    Registro Massimali</h3>            
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; width: 100%;">            
+                    <div style="width: calc(50% - 8px); min-width: 0;">
+                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block; margin-bottom: 4px;">DA:</label>
+                        <input type="date" id="statsDateFrom" onchange="initStatsListener()" style="width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; padding: 6px 2px !important; font-size: 0.75em !important; border: 1px solid #444; background: #222; color: white; border-radius: 4px;">
+                    </div>            
+                    <div style="width: calc(50% - 8px); min-width: 0;">
+                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block; margin-bottom: 4px;">A:</label>
+                        <input type="date" id="statsDateTo" onchange="initStatsListener()" style="width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; padding: 6px 2px !important; font-size: 0.75em !important; border: 1px solid #444; background: #222; color: white; border-radius: 4px;">
+                    </div>            
+                </div>            
+                <select id="exSelect" onchange="initStatsListener()" style="margin-bottom: 10px; width: 100%;"></select>
                 <canvas id="statsChart"></canvas>
             </div>
 
