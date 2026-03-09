@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="icon" type="image/png" href="icona.png">
+    <link rel="apple-touch-icon" href="icona.png">
+    <link rel="manifest" href="manifest.json">
+    <title>CrossFit Pro - Evidence Based Manager</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = { darkMode: 'class' }
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        /* COLORI MODALITÀ CHIARA (Originali) */
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --blue: #0ea5e9;
+            --pink: #ec4899;
+            --green: #10b981;
+            --yellow: #eab308;
+            --orange: #f97316;
+            --border: #e2e8f0;
+        }
+
+        /* COLORI MODALITÀ SCURA (Cambiano solo sfondi e testi) */
+        html.dark {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding-top: 80px;
+            padding-bottom: 40px;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* La card mantiene la tua forma e i tuoi bordi, cambia solo lo sfondo */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-top: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-left-width: 4px;
+            border-left-color: #cbd5e1;
+            /* Questo verrà sovrascritto dai tuoi stili in linea come volevi tu */
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .icon-nav {
+            width: 22px;
+            height: 22px;
+            stroke-width: 2.5;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        input,
+        textarea,
+        select {
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 0.75rem !important;
+            color: var(--text) !important;
+            padding: 0.75rem !important;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .tab-group {
+            margin-top: 1rem;
+        }
+
+        .btn {
+            border-radius: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 16px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-blue {
+            background-color: var(--blue);
+            color: white;
+            margin-bottom: 0.50rem;
+        }
+
+        .btn-green {
+            background-color: var(--green);
+            color: white;
+            margin-top: 0.50rem;
+            margin-bottom: 0.50rem;
+        }
+
+        .btn-yellow {
+            background: var(--yellow);
+            color: white;
+            margin-top: 0.50rem;
+            margin-bottom: 0.50rem;
+        }
+
+        .btn-import {
+            margin-top: 0.50rem;
+        }
+
+        .btn-red {
+            background-color: var(--pink);
+            color: white;
+        }
+
+        /* NAVBAR e MENU: seguono i colori delle card */
+        header {
+            background-color: var(--card-bg) !important;
+            border-bottom-color: var(--border) !important;
+            transition: background-color 0.3s;
+        }
+
+        #top-menu {
+            background-color: var(--card-bg) !important;
+            border-color: var(--border) !important;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item {
+            color: var(--text-light);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item.active {
+            color: var(--blue);
+            background-color: rgba(14, 165, 233, 0.1);
+        }
+
+        .whiteboard {
+            background: var(--bg);
+            color: var(--text);
+            padding: 15px;
+            border: 1px dashed var(--blue);
+            border-radius: 1rem;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.4;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .log-entry {
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            border-left-width: 4px;
+            position: relative;
+            white-space: pre-wrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn-del {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--pink);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .tab-group {
+            display: flex;
+            background: var(--border);
+            padding: 5px;
+            border-radius: 1rem;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: bold;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active.forza-style {
+            background: var(--card-bg);
+            color: var(--pink);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-btn.active.wod-style {
+            background: var(--card-bg);
+            color: var(--blue);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Timer */
+        #status {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            font-weight: bold;
+            transition: color 0.3s;
+            margin-bottom: 5px;
+        }
+
+        #display {
+            font-family: 'Courier New', monospace;
+            font-size: 4.5rem;
+            font-weight: bold;
+            line-height: 1;
+            margin: 15px 0;
+            color: var(--text);
+        }
+
+        #amrapPicker {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            margin: 15px 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .time-option {
+            padding: 10px;
+            font-size: 1rem;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .time-option.selected {
+            color: var(--blue);
+            background: rgba(14, 165, 233, 0.1);
+            font-weight: bold;
+        }
+
+        .grid-inputs {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 30%;
+        }
+
+        .input-box label {
+            font-size: 0.6rem;
+            color: var(--blue);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .select-wrapper {
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            border-radius: 0.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .select-wrapper select {
+            border: none !important;
+            padding: 5px !important;
+            margin: 0 !important;
+            width: auto;
+        }
+
+        #customAmrap {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px dashed var(--pink);
+            border-radius: 1rem;
+        }
+
+        .modes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .btn-mode {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            padding: 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 0.75rem;
+            cursor: pointer;
+        }
+
+        .btn-mode.active {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+        }
+
+        .btn-main {
+            width: 100%;
+            height: 60px;
+            background: var(--blue);
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: none;
+            cursor: pointer;
+            border-radius: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .running-controls {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-pause {
+            background: var(--text);
+            height: 60px;
+            font-weight: 900;
+            border: none;
+            width: 100%;
+            color: var(--bg);
+            font-size: 1.2rem;
+            border-radius: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-stop {
+            background: var(--pink);
+            color: #fff;
+            height: 60px;
+            font-weight: 900;
+            border: none;
+            width: 100%;
+            font-size: 1.2rem;
+            border-radius: 1rem;
+            cursor: pointer;
+        }
+
+        #lockStatus {
+            font-size: 0.6rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .timer-wrapper {
+            text-align: center;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendEmailVerification, sendPasswordResetEmail, updateEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASuX24x3WiK_LGtWqEfZM8btW1esVIX1Q",
+            authDomain: "crossfitpro-2f642.firebaseapp.com",
+            databaseURL: "https://crossfitpro-2f642-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "crossfitpro-2f642",
+            storageBucket: "crossfitpro-2f642.firebasestorage.app",
+            messagingSenderId: "14963097226",
+            appId: "1:14963097226:web:18c6fa24a7e06eef857773",
+            measurementId: "G-H3Q4NJEP53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        window.auth = auth; window.db = db;
+        window.signIn = (e, p) => signInWithEmailAndPassword(auth, e, p);
+        window.signUp = (e, p) => createUserWithEmailAndPassword(auth, e, p);
+        window.logout = () => signOut(auth);
+        window.verifyEmail = (user) => sendEmailVerification(user);
+        window.resetPass = (email) => sendPasswordResetEmail(auth, email);
+        window.updateUserEmail = (newEmail) => updateEmail(auth.currentUser, newEmail);
+        window.dbRef = ref; window.dbSet = set; window.dbPush = push; window.dbOnValue = onValue; window.dbRemove = remove; window.dbGet = get;
+        window.currentUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.emailVerified) {
+                window.currentUser = user;
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('app-container').classList.remove('hidden');
+                syncDates(new Date().toISOString().split('T')[0]);
+                populateExSelect();
+            } else {
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.getElementById('app-container').classList.add('hidden');
+                if (user && !user.emailVerified) {
+                    alert("ACCOUNT NON ATTIVO: Controlla la tua email e clicca sul link di verifica. Se non la trovi, controlla nello SPAM.");
+                    signOut(auth);
+                }
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div id="login-overlay"
+        class="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-slate-900/50 backdrop-blur-sm">
+        <div class="login-box p-8 w-full max-w-sm"
+            style="background: var(--card-bg); border-radius: 2rem; border: 1px solid var(--border);">
+            <h2 class="text-2xl font-black text-center mb-6 tracking-tight" style="color: var(--blue);">ACCESSO</h2>
+            <div class="space-y-4">
+                <input type="email" id="login-email" placeholder="Email" class="w-full">
+                <input type="password" id="login-pass" placeholder="Password" class="w-full">
+                <button onclick="handleLogin()"
+                    class="btn btn-blue shadow-lg shadow-blue-100 dark:shadow-none">LOGIN</button>
+                <div class="text-center">
+                    <span class="cursor-pointer text-xs font-bold" style="color:var(--blue); text-decoration:underline;"
+                        onclick="handleResetPassword()">PASSWORD DIMENTICATA?</span>
+                </div>
+                <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button onclick="handleSignUp()" class="btn btn-green text-sm">REGISTRATI</button>
+                </div>
+            </div>
+            <p id="login-error" class="text-rose-500 text-xs text-center mt-4 font-bold"></p>
+        </div>
+    </div>
+
+    <div id="app-container" class="max-w-md mx-auto p-4 hidden">
+
+        <header
+            class="fixed top-0 left-0 right-0 h-16 bg-white/90 backdrop-blur-md border-b flex justify-between items-center px-4 z-50">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleMenu()" class="p-2" style="color: var(--text);">
+                    <svg class="icon-nav" viewBox="0 0 24 24">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 class="font-black text-lg tracking-tighter" style="color: var(--blue);">CF PRO</h1>
+            </div>
+
+            <button onclick="toggleTheme()" class="p-2" style="color: var(--text-light);">
+                <svg id="theme-icon" class="icon-nav" viewBox="0 0 24 24">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <nav id="top-menu"
+            class="hidden fixed top-16 left-4 right-4 rounded-2xl shadow-xl border p-4 z-50 flex-col gap-2 fade-in">
+            <div onclick="showPage('plan-page', this)" class="nav-item active">
+                <svg class="icon-nav" viewBox="0 0 24 24">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+                PROG.
+            </div>
+            <div onclick="showPage('log-page', this)" class="nav-item">
+                <svg class="icon-nav" viewBox="0 0 24 24">
+                    <path d="M6 18h12M6 6h12M6 12h12"></path>
+                    <path d="M10 6v12M14 6v12"></path>
+                </svg>
+                DIARIO
+            </div>
+            <div onclick="showPage('timer-page', this)" class="nav-item">
+                <svg class="icon-nav" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                TIMER
+            </div>
+            <div onclick="showPage('meal-page', this)" class="nav-item">
+                <svg class="icon-nav" viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                PASTI
+            </div>
+            <div onclick="showPage('stats-page', this)" class="nav-item">
+                <svg class="icon-nav" viewBox="0 0 24 24">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                STATS
+            </div>
+            <div onclick="window.logout()" class="nav-item" style="color: var(--pink);">
+                <svg class="icon-nav" style="stroke: var(--pink);" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                ESCI
+            </div>
+        </nav>
+
+        <div id="plan-page" class="page fade-in">
+            <h2 class="font-black text-xl mb-4" style="color: var(--text);">📋 Lavagna</h2>
+            <input type="date" id="datePlan" onchange="syncDates(this.value)">
+            <div id="activePlanDisplay"></div>
+
+            <div class="card" style="border-left-color: var(--text-light);">
+                <textarea id="warmup" placeholder="Warm-up" oninput="autoResize(this)" style="height: auto; min-height: 45px; overflow: hidden; resize: none; display: block; width: 100%; margin-top: 0.25rem; margin-bottom: 0.25rem;"></textarea>
+                <textarea id="strength" placeholder="Forza / Skill" oninput="autoResize(this)" style="height: auto; min-height: 45px; overflow: hidden; resize: none; display: block; width: 100%; margin-top: 0.25rem; margin-bottom: 0.25rem;"></textarea>
+                <textarea id="gymnastics" placeholder="Ginnastica" oninput="autoResize(this)" style="height: auto; min-height: 45px; overflow: hidden; resize: none; display: block; width: 100%; margin-top: 0.25rem; margin-bottom: 0.25rem;"></textarea>
+                <textarea id="mainWod" placeholder="WOD" oninput="autoResize(this)" style="height: auto; min-height: 45px; overflow: hidden; resize: none; display: block; width: 100%; margin-bottom: 0.50rem;"></textarea>
+                <button onclick="savePlan()" class="btn btn-blue">Aggiorna Lavagna</button>
+            </div>
+
+            <div class="card" style="border-left-color: var(--pink);">
+                <div onclick="toggleBenchmarks()"
+                    style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    <h3
+                        style="color: var(--pink); margin: 0; font-size: 0.85em; text-transform: uppercase; font-weight: bold;">
+                        🏆 Consultazione Benchmark</h3>
+                    <span id="benchArrow" style="color: var(--pink); transition: 0.3s;">▼</span>
+                </div>
+                <div id="benchmarkContent" style="display: none; margin-top: 15px;">
+                    <select id="benchmarkSelect" onchange="updateBenchmarkText()">
+                        <option value="">-- Scegli un Benchmark --</option>
+                        <optgroup label="THE GIRLS (Benchmark)">
+                            <option value="fran">FRAN</option>
+                            <option value="cindy">CINDY</option>
+                            <option value="grace">GRACE</option>
+                            <option value="annie">ANNIE</option>
+                            <option value="diane">DIANE</option>
+                            <option value="elizabeth">ELIZABETH</option>
+                            <option value="isabel">ISABEL</option>
+                        </optgroup>
+                        <optgroup label="HERO WODS (Special)">
+                            <option value="murph">MURPH</option>
+                            <option value="dt">DT</option>
+                        </optgroup>
+                    </select>
+                    <div id="benchmarkDetails"
+                        style="margin-top: 10px; padding: 12px; border-radius: 6px; background: var(--bg); border: 1px dashed var(--pink); display: none; font-size: 0.85em;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="border-left-color: var(--blue);">
+                <div onclick="toggleConversion()"
+                    style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    <h3
+                        style="color: var(--blue); margin: 0; font-size: 0.85em; text-transform: uppercase; font-weight: bold;">
+                        🔄 Tabella Conversione</h3>
+                    <span id="convArrow" style="color: var(--blue); transition: 0.3s;">▼</span>
+                </div>
+                <div id="conversionContent" style="display: none; margin-top: 15px;">
+                    <div style="display: flex; gap: 5px; margin-bottom: 12px;">
+                        <button onclick="showConv('meters')" id="btnMet"
+                            style="flex:1; padding:8px; background:var(--blue); color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">METRI</button>
+                        <button onclick="showConv('calories')" id="btnCal"
+                            style="flex:1; padding:8px; background:var(--border); color:var(--text); border:none; border-radius:4px; font-weight:bold; cursor:pointer;">CALORIE</button>
+                    </div>
+                    <div id="tableMeters-parent"
+                        style="overflow-x: auto; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg);">
+                        <table id="tableMeters"
+                            style="width: 100%; border-collapse: collapse; font-size: 0.75em; text-align: center;">
+                            <thead
+                                style="position: sticky; top: 0; z-index: 10; background: var(--bg); color: var(--blue);">
+                                <tr>
+                                    <th style="padding: 10px; border-bottom: 1px solid var(--border);">RUN</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid var(--border);">ROW</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid var(--border);">BIKE-ERG</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid var(--border);">ASSAULT-BIKE</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid var(--border);">SKI-ERG</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyMeters" style="color: var(--text);"></tbody>
+                        </table>
+                        <table id="tableCalories"
+                            style="width: 100%; border-collapse: collapse; font-size: 0.7em; text-align: center; display: none;">
+                            <thead
+                                style="position: sticky; top: 0; z-index: 10; background: var(--bg); color: var(--green);">
+                                <tr>
+                                    <th style="padding: 8px 2px; border-bottom: 1px solid var(--border);">10-m SHUTTLE
+                                    </th>
+                                    <th style="padding: 8px 2px; border-bottom: 1px solid var(--border);">RUN</th>
+                                    <th style="padding: 8px 2px; border-bottom: 1px solid var(--border);">ROW</th>
+                                    <th style="padding: 8px 2px; border-bottom: 1px solid var(--border);">ASSAULT-BIKE
+                                    </th>
+                                    <th style="padding: 8px 2px; border-bottom: 1px solid var(--border);">BIKE/SKI-ERG
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyCalories" style="color: var(--text);"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 30px; width: 100%;"></div>
+        </div>
+
+        <div id="log-page" class="page hidden fade-in">
+            <h2 class="font-black text-xl mb-4" style="color: var(--text);">🏋️ Diario Allenamento</h2>
+            <input type="date" id="dateLog" onchange="syncDates(this.value)">
+
+            <div class="tab-group">
+                <button class="tab-btn active forza-style" onclick="switchInnerTab('inner-forza', this)">FORZA /
+                    SKILL</button>
+                <button class="tab-btn wod-style" onclick="switchInnerTab('inner-wod', this)">SCORE WOD</button>
+            </div>
+
+            <div id="inner-forza" class="inner-tab">
+                <div class="card" style="border-left-color: var(--pink);">
+                    <select id="nameForza" style="margin: 0.25rem 0;">
+                        <option value="">-- Seleziona Esercizio --</option>
+                        <option value="Back squat (rack)">Back squat (rack)</option>
+                        <option value="Clean and jerk">Clean and jerk</option>
+                        <option value="Deadlift">Deadlift</option>
+                        <option value="Front squat (da clean)">Front squat (da clean)</option>
+                        <option value="Front squat (rack)">Front squat (rack)</option>
+                        <option value="High hang clean">High hang clean</option>
+                        <option value="High hang snatch">High hang snatch</option>
+                        <option value="Low hang clean">Low hang clean</option>
+                        <option value="Low hang snatch">Low hang snatch</option>
+                        <option value="Overhead squat">Overhead squat</option>
+                        <option value="Power clean">Power clean</option>
+                        <option value="Power snatch">Power snatch</option>
+                        <option value="Push jerk">Push jerk</option>
+                        <option value="Push press">Push press</option>
+                        <option value="Push press + Push jerk">Push press + Push jerk</option>
+                        <option value="Split jerk">Split jerk</option>
+                        <option value="Strict press">Strict press</option>
+                        <option value="Strict press + Push jerk">Strict press + Push jerk</option>
+                        <option value="Thruster">Thruster</option>
+                    </select>
+                    <input type="number" id="valForza" placeholder="Peso (kg)" inputmode="decimal"
+                        style="margin: 0.25rem 0;">
+                    <textarea id="noteForza" placeholder="Note Forza..." oninput="autoResize(this)"
+                        style="margin: 0.25rem 0;"></textarea>
+                    <button class="btn btn-red" onclick="saveEntry('forza')">Salva Forza</button>
+                </div>
+            </div>
+
+            <div id="inner-wod" class="inner-tab" style="display:none;">
+                <div class="card" style="border-left-color: var(--blue);">
+                    <input type="text" id="wodName" placeholder="Nome WOD" style="margin: 0.25rem 0;">
+                    <input type="text" id="wodRes" placeholder="Risultato" style="margin: 0.25rem 0;">
+                    <textarea id="wodNote" placeholder="Note WOD..." oninput="autoResize(this)"
+                        style="margin: 0.25rem 0;"></textarea>
+                    <button class="btn btn-blue" onclick="saveEntry('wod')">Salva WOD</button>
+                </div>
+            </div>
+
+            <div id="historyDisplay"></div>
+            <div style="height: 30px; width: 100%;"></div>
+        </div>
+
+        <div id="timer-page" class="page hidden fade-in">
+            <h2 class="font-black text-xl mb-4" style="color: var(--text);">⏱️ Cyber Timer</h2>
+            <div class="card timer-wrapper" style="border-left-color: var(--text-light);">
+                <div id="lockStatus">Display Auto-Lock: On</div>
+                <div id="status" style="color: var(--pink);">READY</div>
+                <div id="display">00:00</div>
+                <div id="rounds" style="color: var(--pink); margin-bottom: 10px; font-size: 0.9rem; font-weight: bold;">
+                    --/--</div>
+
+                <div class="modes">
+                    <button class="btn-mode active" onclick="setMode('amrap', this)">AMRAP</button>
+                    <button class="btn-mode" onclick="setMode('emom', this)">EMOM</button>
+                    <button class="btn-mode" onclick="setMode('tabata', this)">TABATA</button>
+                    <button class="btn-mode" onclick="setMode('fortime', this)">FOR TIME</button>
+                </div>
+
+                <div id="amrapUI">
+                    <div id="amrapPicker"></div>
+                    <div id="customAmrap">
+                        <div class="input-box"><label>MIN</label><input type="number" id="cAmin" value="10"
+                                oninput="updateAmrapCustom()" style="text-align:center; padding: 5px !important;"></div>
+                        <div class="input-box"><label>SEC</label><input type="number" id="cAsec" value="00"
+                                oninput="updateAmrapCustom()" style="text-align:center; padding: 5px !important;"></div>
+                    </div>
+                </div>
+
+                <div id="othersUI" class="grid-inputs">
+                    <div class="input-box" id="boxRounds"><label>ROUNDS</label>
+                        <div class="select-wrapper"><select id="vRounds"></select></div>
+                    </div>
+                    <div class="input-box" id="boxWork"><label id="labelWork">WORK</label>
+                        <div class="select-wrapper"><select id="vWM"></select><span>:</span><select id="vWS"></select>
+                        </div>
+                    </div>
+                    <div class="input-box" id="boxRest"><label>REST</label>
+                        <div class="select-wrapper"><select id="vRM"></select><span>:</span><select id="vRS"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls" style="margin-top:20px;">
+                    <button class="btn-main" id="startBtn" onclick="initStart()">START</button>
+                    <div id="activeControls" class="running-controls">
+                        <button class="btn-pause" id="pauseBtn" onclick="togglePause()">PAUSE</button>
+                        <button class="btn-stop" onclick="finish()">STOP</button>
+                    </div>
+                    <button onclick="reset()"
+                        style="background:none; border:none; color:var(--text-light); margin-top:15px; cursor:pointer; font-size:0.75rem; font-weight:bold; text-decoration:underline;">RESET
+                        SYSTEM</button>
+                </div>
+            </div>
+            <div style="height: 30px; width: 100%;"></div>
+        </div>
+
+        <div id="meal-page" class="page hidden fade-in">
+            <h2 class="font-black text-xl mb-4" style="color: var(--text);">🍎 Diario Pasti</h2>
+            <input type="date" id="dateMeal" onchange="syncDates(this.value)">
+            <div class="card" style="border-left-color: var(--green);">
+                <input type="text" id="foodName" placeholder="Alimento" style="margin: 0.25rem 0;">
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="foodWeight" placeholder="Grammi" style="margin-top: 0.25rem;">
+                    <input type="number" id="foodCal100" placeholder="Cal/100g" style="margin-top: 0.25rem;">
+                </div>
+                <button class="btn btn-green" onclick="addFoodLocal()">+ AGGIUNGI</button>
+                <div id="temp-meal-summary" style="font-size:0.8em; color:var(--green); font-weight:bold;"></div>
+                <button class="btn btn-blue" onclick="saveMealCloud()">SALVA PASTO</button>
+            </div>
+            <div id="mealsHistoryDisplay"></div>
+            <div style="height: 30px; width: 100%;"></div>
+        </div>
+
+        <div id="stats-page" class="page hidden fade-in">
+            <h2 class="font-black text-xl mb-4" style="color: var(--text);">📈 Statistiche</h2>
+
+            <div class="card" style="border-left-color: var(--green);">
+                <h3
+                    style="color: var(--green); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
+                    ⚡ Calcolatore 1RM per Esercizio</h3>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">ESERCIZIO</label>
+                    <select id="exerciseRM">
+                        <option value="">-- Seleziona Esercizio --</option>
+                        <option value="Back squat (rack)">Back squat (rack)</option>
+                        <option value="Clean and jerk">Clean and jerk</option>
+                        <option value="Deadlift">Deadlift</option>
+                        <option value="Front squat (da clean)">Front squat (da clean)</option>
+                        <option value="Front squat (rack)">Front squat (rack)</option>
+                        <option value="High hang clean">High hang clean</option>
+                        <option value="High hang snatch">High hang snatch</option>
+                        <option value="Low hang clean">Low hang clean</option>
+                        <option value="Low hang snatch">Low hang snatch</option>
+                        <option value="Overhead squat">Overhead squat</option>
+                        <option value="Power clean">Power clean</option>
+                        <option value="Power snatch">Power snatch</option>
+                        <option value="Push jerk">Push jerk</option>
+                        <option value="Push press">Push press</option>
+                        <option value="Push press + Push jerk">Push press + Push jerk</option>
+                        <option value="Split jerk">Split jerk</option>
+                        <option value="Strict press">Strict press</option>
+                        <option value="Strict press + Push jerk">Strict press + Push jerk</option>
+                        <option value="Thruster">Thruster</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div><label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">PESO
+                            (KG)</label><input type="number" id="weightRM" placeholder="es. 80"></div>
+                    <div><label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">REPS</label><input
+                            type="number" id="repsRM" placeholder="es. 5"></div>
+                </div>
+                <button class="btn btn-green" onclick="calculate1RM()">CALCOLA 1RM</button>
+                <div id="resultRM"
+                    style="margin-top: 15px; text-align: center; display: none; padding: 10px; background: var(--bg); border: 1px solid var(--green); border-radius: 8px;">
+                    <span id="labelRM"
+                        style="font-size: 0.8em; color: var(--text-light); text-transform: uppercase;"></span><br>
+                    <strong id="valueRM" style="font-size: 1.8em; color: var(--green);">--</strong> <span
+                        style="color: var(--green);">KG</span>
+                </div>
+            </div>
+
+            <div class="card" style="border-left-color: var(--blue);">
+                <h3
+                    style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
+                    Calcolo Percentuali</h3>
+                <input type="number" id="calcWeight" placeholder="Inserisci Kg (es. 100)" oninput="calculatePerc()"
+                    style="font-size: 1.2em; text-align: center;">
+                <div id="percResult"
+                    style="margin-top:15px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center;">
+                </div>
+            </div>
+
+            <div class="card" style="border-left-color: var(--blue);">
+                <h3
+                    style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
+                    Registro Massimali</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div style="min-width: 0;">
+                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">DA:</label>
+                        <input type="date" id="statsDateFrom" onchange="initStatsListener()"
+                            style="padding: 8px !important; font-size: 0.85em; margin-bottom: 10px !important;">
+                    </div>
+                    <div style="min-width: 0;">
+                        <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold;">A:</label>
+                        <input type="date" id="statsDateTo" onchange="initStatsListener()"
+                            style="padding: 8px !important; font-size: 0.85em; margin-bottom: 10px !important;">
+                    </div>
+                </div>
+                <select id="exSelect" onchange="initStatsListener()" style="margin-bottom: 10px;"></select>
+                <canvas id="statsChart"></canvas>
+            </div>
+
+            <div class="card" style="border-left-color: var(--pink);">
+                <button class="btn btn-blue" onclick="exportCSV()">REPORT EXCEL (CSV)</button>
+                <button class="btn btn-red" onclick="exportHTML()">REPORT STORICO (HTML)</button>
+                <button class="btn btn-yellow" onclick="exportJSON()">REPORT JSON (BACKUP)</button>
+                <hr style="border-top: 1px solid var(--border); margin: 10px 0;">
+                <h3
+                    style="color: var(--orange); font-size:0.8em; text-transform: uppercase; font-weight:bold; margin-bottom:10px;">
+                    Importa Backup JSON</h3>
+                <input type="file" id="importJsonFile" accept=".json" style="font-size: 0.7em; color: var(--text);">
+                <button class="btn btn-import" style="background: var(--orange); color:white;"
+                    onclick="importJSON()">ESEGUI IMPORTAZIONE</button>
+            </div>
+            <div style="height: 30px; width: 100%;"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('top-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+        }
+
+        function showPage(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+
+            const menu = document.getElementById('top-menu');
+            if (menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+            if (id === 'stats-page') populateExSelect();
+        }
+
+        // --- FUNZIONE DARK MODE ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            html.classList.toggle('dark');
+
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            }
+        }
+
+        // Imposta icona corretta all'avvio
+        document.addEventListener("DOMContentLoaded", () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('theme-icon').innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+            }
+        });
+
+        let tempItems = []; let myChart = null;
+
+        function toggleConversion() {
+            const content = document.getElementById('conversionContent'); const arrow = document.getElementById('convArrow');
+            if (content.style.display === 'none') { content.style.display = 'block'; arrow.style.transform = 'rotate(180deg)'; initConversionData(); }
+            else { content.style.display = 'none'; arrow.style.transform = 'rotate(0deg)'; }
+        }
+
+        function initConversionData() {
+            const dataMeters = [{ run: "80", row: "100/80", bike: "160", air: "6/4 cal", extra: "100/80" }, { run: "100", row: "125/100", bike: "200", air: "7/5 cal", extra: "125/100" }, { run: "160", row: "200/160", bike: "320", air: "12/8 cal", extra: "200/160" }, { run: "200", row: "250/200", bike: "400", air: "15/10 cal", extra: "250/200" }, { run: "320", row: "400/320", bike: "640", air: "24/18 cal", extra: "400/320" }, { run: "400", row: "500/400", bike: "800", air: "30/21 cal", extra: "500/400" }, { run: "600", row: "750/600", bike: "1200", air: "45/30 cal", extra: "750/600" }, { run: "640", row: "800/640", bike: "1280", air: "48/32 cal", extra: "800/640" }, { run: "800", row: "1000/800", bike: "1600", air: "60/42 cal", extra: "1000/800" }, { run: "1000", row: "1250/1000", bike: "2000", air: "75/50 cal", extra: "1250/1000" }, { run: "1600", row: "2000/1600", bike: "3200", air: "120/84 cal", extra: "2000/1600" }, { run: "2000", row: "2500/2000", bike: "4000", air: "150/100 cal", extra: "2500/2000" }, { run: "4000", row: "5000/4000", bike: "8000", air: "300/200 cal", extra: "5000/4000" }, { run: "5000", row: "6250/5000", bike: "10000", air: "375/250 cal", extra: "6250/5000" }, { run: "8000", row: "10000/8000", bike: "16000", air: "600/400 cal", extra: "10000/8000" }, { run: "10000", row: "12500/10000", bike: "20000", air: "750/500 cal", extra: "12500/10000" }];
+            const dataCalories = [{ s: "1", run: "10/14m", row: "1", ab: "0.7", extra: "1" }, { s: "3", run: "30/40m", row: "3", ab: "2", extra: "3" }, { s: "6", run: "60/65m", row: "6", ab: "4", extra: "6" }, { s: "9", run: "85/125m", row: "9", ab: "6", extra: "9" }, { s: "10", run: "100/150m", row: "10", ab: "7", extra: "10" }, { s: "12", run: "115/170m", row: "12", ab: "8", extra: "12" }, { s: "14", run: "133/200m", row: "14", ab: "10", extra: "14" }, { s: "15", run: "140/215m", row: "15", ab: "11", extra: "15" }, { s: "18", run: "170/260m", row: "18", ab: "13", extra: "18" }, { s: "20", run: "190/285m", row: "20", ab: "14", extra: "20" }, { s: "21", run: "200/300m", row: "21", ab: "15", extra: "21" }, { s: "24", run: "230/340m", row: "24", ab: "17", extra: "24" }, { s: "29", run: "275/400m", row: "29", ab: "20", extra: "29" }, { s: "30", run: "300/430m", row: "30", ab: "21", extra: "30" }, { s: "40", run: "380/570m", row: "40", ab: "28", extra: "40" }, { s: "43", run: "400/600m", row: "43", ab: "30", extra: "43" }, { s: "50", run: "475/715m", row: "50", ab: "35", extra: "50" }, { s: "57", run: "540/800m", row: "57", ab: "40", extra: "57" }, { s: "60", run: "600/860m", row: "60", ab: "42", extra: "60" }, { s: "70", run: "665/1000m", row: "70", ab: "49", extra: "70" }, { s: "80", run: "760/1150m", row: "80", ab: "56", extra: "80" }, { s: "90", run: "800/1255m", row: "90", ab: "63", extra: "90" }, { s: "100", run: "950/1425m", row: "100", ab: "70", extra: "100" }];
+            document.getElementById('bodyMeters').innerHTML = dataMeters.map(r => `<tr style="border-bottom: 1px solid var(--border);"><td style="padding: 10px; background: rgba(14, 165, 233, 0.1);"><b>${r.run}m</b></td><td style="border-right: 1px solid var(--border);">${r.row}</td><td style="border-right: 1px solid var(--border);">${r.bike}</td><td style="border-right: 1px solid var(--border); color: var(--orange);">${r.air}</td><td style="border-right: 1px solid var(--border); font-size: 0.9em; opacity: 0.6;">${r.extra}</td></tr>`).join('');
+            document.getElementById('bodyCalories').innerHTML = dataCalories.map(r => `<tr style="border-bottom: 1px solid var(--border);"><td style="padding: 10px; background: rgba(16, 185, 129, 0.1);"><b>${r.s}</b></td><td style="border-right: 1px solid var(--border);">${r.run}</td><td style="border-right: 1px solid var(--border);">${r.row}</td><td style="border-right: 1px solid var(--border); color: var(--orange);">${r.ab}</td><td style="border-right: 1px solid var(--border); font-size: 0.9em; opacity: 0.6;">${r.extra}</td></tr>`).join('');
+        }
+
+        function showConv(type) {
+            const tMet = document.getElementById('tableMeters'); const tCal = document.getElementById('tableCalories');
+            const bMet = document.getElementById('btnMet'); const bCal = document.getElementById('btnCal');
+            if (type === 'meters') { tMet.style.display = 'table'; tCal.style.display = 'none'; bMet.style.background = 'var(--blue)'; bMet.style.color = 'white'; bCal.style.background = 'var(--border)'; bCal.style.color = 'var(--text)'; }
+            else { tMet.style.display = 'none'; tCal.style.display = 'table'; bCal.style.background = 'var(--green)'; bCal.style.color = 'white'; bMet.style.background = 'var(--border)'; bMet.style.color = 'var(--text)'; }
+        }
+
+        function autoResize(textarea) { textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px'; }
+
+        async function handleLogin() { const e = document.getElementById('login-email').value; const p = document.getElementById('login-pass').value; try { await window.signIn(e, p); } catch (err) { document.getElementById('login-error').innerText = "Credenziali errate o account non verificato."; } }
+        async function handleSignUp() { const e = document.getElementById('login-email').value.trim(); const p = document.getElementById('login-pass').value; const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; if (!emailRegex.test(e)) { alert("Per favore, inserisci un indirizzo email valido."); return; } if (p.length < 6) { alert("La password deve avere almeno 6 caratteri."); return; } try { const userCredential = await window.signUp(e, p); await window.verifyEmail(userCredential.user); alert("REGISTRAZIONE QUASI COMPLETATA: Ti abbiamo inviato una mail di verifica."); await window.logout(); } catch (err) { document.getElementById('login-error').innerText = "Errore: " + err.message; } }
+        async function handleResetPassword() { const email = document.getElementById('login-email').value; if (!email) { alert("Inserisci l'email nel campo sopra per ricevere il link di reset."); return; } try { await window.resetPass(email); alert("Email di reset inviata! Controlla la posta."); } catch (err) { alert("Errore: Email non trovata."); } }
+
+        async function importJSON() {
+            const fileInput = document.getElementById('importJsonFile');
+            if (!fileInput || !fileInput.files[0]) { alert("Seleziona prima un file .json"); return; }
+            const file = fileInput.files[0]; const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const rawData = JSON.parse(e.target.result); let finalData = {};
+                    if (rawData.cf_history) {
+                        const historyArray = JSON.parse(rawData.cf_history); finalData.history = {};
+                        historyArray.forEach((item, index) => {
+                            const newKey = "import_" + Date.now() + "_" + index;
+                            finalData.history[newKey] = { date: item.date, name: item.name, res: item.res.toString(), note: item.note || "", type: "forza" };
+                        });
+                    }
+                    if (rawData.cf_plans) finalData.plans = JSON.parse(rawData.cf_plans);
+                    if (confirm("Dati rilevati correttamente. Vuoi sovrascrivere il profilo cloud con questo backup?")) {
+                        await window.dbSet(window.dbRef(window.db, `users/${window.currentUser.uid}`), finalData); alert("Importazione completata!"); window.location.reload();
+                    }
+                } catch (err) { alert("Errore file: " + err.message); }
+            }; reader.readAsText(file);
+        }
+
+        function syncDates(val) { document.getElementById('datePlan').value = val; document.getElementById('dateLog').value = val; document.getElementById('dateMeal').value = val; loadPlan(val); loadHistory(val); loadMeals(val); }
+
+        function savePlan() {
+            const date = document.getElementById('datePlan').value;
+            const data = { w: document.getElementById('warmup').value, s: document.getElementById('strength').value, g: document.getElementById('gymnastics').value, m: document.getElementById('mainWod').value };
+            window.dbSet(window.dbRef(window.db, `users/${window.currentUser.uid}/plans/${date}`), data);
+        }
+
+        function loadPlan(date) {
+            window.dbOnValue(window.dbRef(window.db, `users/${window.currentUser.uid}/plans/${date}`), snap => {
+                const p = snap.val(); const div = document.getElementById('activePlanDisplay'); const ids = ['warmup', 'strength', 'gymnastics', 'mainWod'];
+                if (p) {
+                    let visual = `<div class="whiteboard">`;
+                    if (p.w) visual += `<small style="color:var(--pink); font-size:0.7em; display:block; margin-bottom:2px; font-weight:bold;">WARM-UP</small>${p.w}\n\n`;
+                    if (p.s) visual += `<small style="color:var(--pink); font-size:0.7em; display:block; margin-bottom:2px; font-weight:bold;">FORZA / SKILL</small>${p.s}\n\n`;
+                    if (p.g) visual += `<small style="color:var(--pink); font-size:0.7em; display:block; margin-bottom:2px; font-weight:bold;">GINNASTICA</small>${p.g}\n\n`;
+                    if (p.m) visual += `<small style="color:var(--pink); font-size:0.7em; display:block; margin-bottom:2px; font-weight:bold;">WOD</small>${p.m}`;
+                    visual += `</div>`; div.innerHTML = visual;
+                    document.getElementById('warmup').value = p.w || ''; document.getElementById('strength').value = p.s || ''; document.getElementById('gymnastics').value = p.g || ''; document.getElementById('mainWod').value = p.m || '';
+                    setTimeout(() => { ids.forEach(id => { const el = document.getElementById(id); if (el) autoResize(el); }); }, 50);
+                } else {
+                    div.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-light); font-size:0.8em; font-weight:bold;">NESSUN PROGRAMMA</div>`;
+                    ids.forEach(id => { const el = document.getElementById(id); if (el) { el.value = ""; el.style.height = '50px'; } });
+                }
+            });
+        }
+
+        function switchInnerTab(tabId, el) { document.querySelectorAll('.inner-tab').forEach(t => t.style.display = 'none'); document.getElementById(tabId).style.display = 'block'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+
+        function saveEntry(type) {
+            const date = document.getElementById('dateLog').value; let data = { date, type };
+            if (type === 'forza') { data.name = document.getElementById('nameForza').value; data.res = document.getElementById('valForza').value; data.note = document.getElementById('noteForza').value; }
+            else { data.name = document.getElementById('wodName').value; data.res = document.getElementById('wodRes').value; data.note = document.getElementById('wodNote').value; }
+            if (!data.name || !data.res) { alert("Inserisci sia il nome che il risultato!"); return; }
+            window.dbPush(window.dbRef(window.db, `users/${window.currentUser.uid}/history`), data);
+            if (type === 'forza') { document.getElementById('valForza').value = ""; document.getElementById('noteForza').value = ""; }
+            else { document.getElementById('wodName').value = ""; document.getElementById('wodRes').value = ""; document.getElementById('wodNote').value = ""; }
+        }
+
+        function loadHistory(date) {
+            window.dbOnValue(window.dbRef(window.db, `users/${window.currentUser.uid}/history`), snap => {
+                const data = snap.val(); const display = document.getElementById('historyDisplay'); display.innerHTML = "";
+                if (data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        const item = data[key];
+                        if (item.date === date) {
+                            const borderColor = (item.type === 'wod') ? 'var(--blue)' : 'var(--pink)';
+                            const label = (item.type === 'wod') ? 'WOD' : 'FORZA / SKILL';
+                            display.innerHTML += `
+                            <div class="log-entry" style="border-left-color: ${borderColor};">
+                                <button class="btn-del" onclick="deleteItem('history/${key}')">×</button>
+                                <small style="color:${borderColor}; font-size:0.7em; text-transform:uppercase; display:block; margin-bottom:2px; font-weight:bold;">${label}</small>
+                                <b style="font-size:1.1em; color:var(--text); display:block;">${item.name}: ${item.res}</b>
+                                <div style="color:var(--text-light); margin-top:5px;">${item.note || ''}</div>
+                            </div>`;
+                        }
+                    });
+                }
+            });
+        }
+
+        function calculate1RM() {
+            const exercise = document.getElementById('exerciseRM').value; const weight = parseFloat(document.getElementById('weightRM').value); const reps = parseInt(document.getElementById('repsRM').value);
+            const resultDiv = document.getElementById('resultRM'); const valueDisplay = document.getElementById('valueRM'); const labelDisplay = document.getElementById('labelRM');
+            if (weight > 0 && reps > 0) {
+                let oneRM; if (reps === 1) oneRM = weight; else oneRM = weight / (1.0278 - (0.0278 * reps));
+                labelDisplay.innerText = `Massimale stimato per ${exercise}:`; valueDisplay.innerText = Math.round(oneRM); resultDiv.style.display = 'block';
+            } else { alert("Per favore, inserisci peso e ripetizioni."); }
+        }
+
+        function calculatePerc() {
+            const weight = document.getElementById('calcWeight').value; const display = document.getElementById('percResult');
+            if (!weight || weight <= 0) { display.innerHTML = ""; display.style.marginBottom = "0px"; return; }
+            display.style.marginBottom = "15px"; const percentages = [60, 65, 70, 75, 80, 85, 90, 95]; let html = "";
+            percentages.forEach(p => {
+                const calc = (weight * (p / 100)).toFixed(1); const color = p >= 90 ? 'var(--pink)' : 'var(--blue)';
+                html += `<div style="background: var(--bg); padding: 5px; border-radius: 4px; border: 1px solid var(--border);"><div style="color: ${color}; font-size: 0.7em; font-weight: bold;">${p}%</div><div style="font-size: 0.9em; font-weight: bold; color: var(--text);">${calc}</div></div>`;
+            }); display.innerHTML = html;
+        }
+
+        function addFoodLocal() { const n = document.getElementById('foodName').value, w = document.getElementById('foodWeight').value, c = document.getElementById('foodCal100').value; if (n && w && c) { tempItems.push({ n, kcal: Math.round((w * c) / 100) }); document.getElementById('temp-meal-summary').innerText = "In lista: " + tempItems.map(i => i.n).join(", "); document.getElementById('foodName').value = ""; document.getElementById('foodWeight').value = ""; } }
+        function saveMealCloud() { const date = document.getElementById('dateMeal').value; const total = tempItems.reduce((s, x) => s + x.kcal, 0); if (total === 0) return; window.dbPush(window.dbRef(window.db, `users/${window.currentUser.uid}/meals`), { date, total, desc: tempItems.map(i => i.n).join(', ') }); tempItems = []; document.getElementById('temp-meal-summary').innerText = ""; }
+        function loadMeals(date) { window.dbOnValue(window.dbRef(window.db, `users/${window.currentUser.uid}/meals`), snap => { const data = snap.val(); const display = document.getElementById('mealsHistoryDisplay'); display.innerHTML = ""; if (data) { Object.keys(data).reverse().forEach(key => { const item = data[key]; if (item.date === date) { display.innerHTML += `<div class="log-entry" style="border-left-color: var(--green);"><button class="btn-del" onclick="deleteItem('meals/${key}')">×</button><b style="color:var(--text);">Energia</b>: ${item.total} kcal<br><small style="color:var(--text-light);">${item.desc}</small></div>`; } }); } }); }
+
+        function populateExSelect() {
+            window.dbOnValue(window.dbRef(window.db, `users/${window.currentUser.uid}/history`), snap => {
+                const data = snap.val(); const sel = document.getElementById('exSelect'); if (!data) return;
+                let names = [...new Set(Object.values(data).filter(x => x.type === 'forza' || !x.type).map(x => x.name))];
+                names.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+                sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+                initStatsListener();
+            }, { onlyOnce: true });
+        }
+
+        function initStatsListener() {
+            const exName = document.getElementById('exSelect').value; const dateFrom = document.getElementById('statsDateFrom').value; const dateTo = document.getElementById('statsDateTo').value;
+            window.dbOnValue(window.dbRef(window.db, `users/${window.currentUser.uid}/history`), snap => {
+                const data = snap.val(); if (!data) return;
+                let historyArr = Object.values(data).filter(i => i.name === exName);
+                if (dateFrom) historyArr = historyArr.filter(i => i.date >= dateFrom);
+                if (dateTo) historyArr = historyArr.filter(i => i.date <= dateTo);
+                historyArr.sort((a, b) => new Date(a.date) - new Date(b.date));
+                const labels = historyArr.map(i => i.date.split('-').reverse().join('/')); const values = historyArr.map(i => parseFloat(i.res));
+                if (myChart) myChart.destroy();
+                myChart = new Chart(document.getElementById('statsChart').getContext('2d'), { type: 'line', data: { labels, datasets: [{ label: exName, data: values, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.1)', fill: true, tension: 0.3 }] }, options: { scales: { y: { grid: { color: 'var(--border)' } }, x: { grid: { color: 'var(--border)' } } }, plugins: { legend: { display: false } } } });
+            });
+        }
+
+        function toggleBenchmarks() { const content = document.getElementById('benchmarkContent'); const arrow = document.getElementById('benchArrow'); if (content.style.display === 'none') { content.style.display = 'block'; arrow.style.transform = 'rotate(180deg)'; } else { content.style.display = 'none'; arrow.style.transform = 'rotate(0deg)'; } }
+        function updateBenchmarkText() {
+            const data = { "fran": { t: "FRAN", type: "girl", d: "<b>21-15-9:</b><br>• Thrusters (43/30kg)<br>• Pull-ups" }, "cindy": { t: "CINDY", type: "girl", d: "<b>AMRAP 20':</b><br>• 5 Pull-ups<br>• 10 Push-ups<br>• 15 Squats" }, "grace": { t: "GRACE", type: "girl", d: "<b>For Time:</b><br>• 30 Clean & Jerks (61/43kg)" }, "annie": { t: "ANNIE", type: "girl", d: "<b>50-40-30-20-10:</b><br>• Double-unders<br>• Sit-ups" }, "diane": { t: "DIANE", type: "girl", d: "<b>21-15-9:</b><br>• Deadlift (102/70kg)<br>• HSPU" }, "elizabeth": { t: "ELIZABETH", type: "girl", d: "<b>21-15-9:</b><br>• Cleans (61/43kg)<br>• Ring Dips" }, "isabel": { t: "ISABEL", type: "girl", d: "<b>For Time:</b><br>• 30 Snatches (61/43kg)" }, "murph": { t: "MURPH", type: "hero", d: "<b>For Time:</b><br>• 1.6km Run<br>• 100 Pull-ups<br>• 200 Push-ups<br>• 300 Squats<br>• 1.6km Run" }, "dt": { t: "DT", type: "hero", d: "<b>5 Rounds:</b><br>• 12 DL (70/47kg)<br>• 9 Hang Power Clean<br>• 6 Push Jerk" } };
+            const val = document.getElementById('benchmarkSelect').value; const det = document.getElementById('benchmarkDetails');
+            if (val && data[val]) { const wod = data[val]; const color = (wod.type === 'hero') ? 'var(--orange)' : 'var(--pink)'; const label = (wod.type === 'hero') ? 'HERO WOD' : 'GIRL BENCHMARK'; det.style.display = 'block'; det.style.borderLeft = `3px solid ${color}`; det.innerHTML = `<small style="color:${color}; font-size:0.7em; letter-spacing:1px; font-weight:bold;">${label}</small><br><b style="color:${color}; font-size:1.1em;">${wod.t}</b><br><p style="margin:5px 0 0; font-size:0.9em; line-height:1.4; color:var(--text);">${wod.d}</p>`; } else { det.style.display = 'none'; }
+        }
+
+        window.deleteItem = (path) => { if (confirm("Eliminare?")) window.dbRemove(window.dbRef(window.db, `users/${window.currentUser.uid}/${path}`)); }
+        async function exportCSV() { const snap = await window.dbGet(window.dbRef(window.db, `users/${window.currentUser.uid}/history`)); const data = snap.val(); if (!data) return; const history = Object.values(data); const csv = ["Data,Esercizio,Risultato,Note", ...history.map(e => `${e.date},"${e.name}",${e.res},"${(e.note || "")}"`)].join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = `report.csv`; link.click(); }
+        async function exportHTML() { const hSnap = await window.dbGet(window.dbRef(window.db, `users/${window.currentUser.uid}/history`)); const history = hSnap.val(); if (!history) return; let html = `<html><body style="background:#f8fafc;color:#1e293b;font-family:sans-serif;"><h1>Report</h1>`; Object.values(history).forEach(h => { html += `<div style="border-left:4px solid #0ea5e9;padding:10px;margin:10px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.1); border-radius:8px;">${h.date} - <b>${h.name}</b>: ${h.res}</div>`; }); html += `</body></html>`; const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); link.download = `report.html`; link.click(); }
+        async function exportJSON() { try { const snap = await window.dbGet(window.dbRef(window.db, `users/${window.currentUser.uid}`)); const data = snap.val(); if (!data) { alert("Nessun dato da esportare."); return; } const jsonString = JSON.stringify(data, null, 2); const blob = new Blob([jsonString], { type: 'application/json' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `backup_cloud_cf_${new Date().toISOString().split('T')[0]}.json`; link.click(); } catch (err) { alert("Errore durante l'esportazione: " + err.message); } }
+
+        /* TIMER LOGIC */
+        let timer = null, timeLeft = 0, isRunning = false, mode = 'amrap', currentR = 1, totalR = 1, isWork = true, inPrep = false; let workSecs, restSecs, amrapSecs = 600; let wakeLock = null;
+        async function requestWakeLock() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); document.getElementById('lockStatus').innerText = "Display Auto-Lock: Disabled"; document.getElementById('lockStatus').style.color = "var(--green)"; wakeLock.addEventListener('release', () => { document.getElementById('lockStatus').innerText = "Display Auto-Lock: On"; document.getElementById('lockStatus').style.color = "var(--text-light)"; }); } } catch (err) { console.error(`${err.name}, ${err.message}`); } }
+        function releaseWakeLock() { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } }
+
+        // 1. Creiamo il "motore audio" una sola volta, fuori dalla funzione
+            let audioCtx = null;
+
+            // 2. Ecco la nuova funzione beep intelligente
+            function beep(freq, duration) {
+                // Se il motore audio non esiste ancora, lo creiamo
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                // Se il telefono ha "addormentato" l'audio per risparmiare batteria, lo svegliamo
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.type = 'sine'; // il tipo di suono (classico beep)
+                oscillator.frequency.value = freq;
+
+                // Colleghiamo i vari pezzi per far uscire il suono
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.start();
+
+                // Abbassiamo il volume dolcemente alla fine per evitare un fastidioso rumore metallico
+                gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+                oscillator.stop(audioCtx.currentTime + duration);
+            }
+
+        function fill(id, max, pad = true, min = 0) { const s = document.getElementById(id); for (let i = min; i <= max; i++) { let o = document.createElement('option'); o.value = i; o.innerHTML = pad ? String(i).padStart(2, '0') : i; s.appendChild(o); } }
+        fill('vRounds', 100, false, 1); fill('vWM', 99); fill('vWS', 59); fill('vRM', 99); fill('vRS', 59); document.getElementById('vRounds').value = 8; document.getElementById('vWS').value = 20; document.getElementById('vRS').value = 10;
+        function generateAmrapPicker() { const p = document.getElementById('amrapPicker'); const opts = [{ l: '30 secondi', v: 30 }, { l: '1 min', v: 60 }, { l: '5 min', v: 300 }, { l: '10 min', v: 600 }, { l: '15 min', v: 900 }, { l: '20 min', v: 1200 }, { l: 'PERSONALIZZATO', v: 'custom' }]; opts.forEach(o => { const d = document.createElement('div'); d.className = 'time-option' + (amrapSecs === o.v ? ' selected' : ''); d.innerText = o.l; d.onclick = () => { document.querySelectorAll('.time-option').forEach(x => x.classList.remove('selected')); d.classList.add('selected'); if (o.v === 'custom') { document.getElementById('customAmrap').style.display = 'flex'; updateAmrapCustom(); } else { document.getElementById('customAmrap').style.display = 'none'; amrapSecs = o.v; updateDisplay(amrapSecs); } }; p.appendChild(d); }); }
+        function updateAmrapCustom() { amrapSecs = (parseInt(document.getElementById('cAmin').value) || 0) * 60 + (parseInt(document.getElementById('cAsec').value) || 0); updateDisplay(amrapSecs); }
+        function setMode(m, btn) { mode = m; document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById('amrapUI').style.display = (m === 'amrap') ? 'block' : 'none'; document.getElementById('othersUI').style.display = (m !== 'amrap') ? 'flex' : 'none'; document.getElementById('boxRounds').style.display = (m === 'emom' || m === 'tabata') ? 'flex' : 'none'; document.getElementById('boxWork').style.display = (m !== 'amrap') ? 'flex' : 'none'; document.getElementById('boxRest').style.display = (m === 'tabata') ? 'flex' : 'none'; document.getElementById('labelWork').innerText = (m === 'fortime') ? 'CAP' : 'WORK'; reset(); }
+        function updateDisplay(s) { if (s < 0) s = 0; const min = Math.floor(s / 60); const sec = s % 60; document.getElementById('display').innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`; }
+        function initStart() { if (audioCtx.state === 'suspended') { audioCtx.resume().then(() => { console.log("Audio riattivato"); }); } requestWakeLock(); if (mode === 'amrap') timeLeft = amrapSecs; else if (mode === 'emom') { totalR = parseInt(document.getElementById('vRounds').value); workSecs = (parseInt(document.getElementById('vWM').value) * 60) + parseInt(document.getElementById('vWS').value); timeLeft = workSecs; currentR = 1; } else if (mode === 'tabata') { totalR = parseInt(document.getElementById('vRounds').value); workSecs = (parseInt(document.getElementById('vWM').value) * 60) + parseInt(document.getElementById('vWS').value); restSecs = (parseInt(document.getElementById('vRM').value) * 60) + parseInt(document.getElementById('vRS').value); timeLeft = workSecs; currentR = 1; isWork = true; } else if (mode === 'fortime') { workSecs = (parseInt(document.getElementById('vWM').value) * 60) + parseInt(document.getElementById('vWS').value); timeLeft = 0; } document.getElementById('startBtn').style.display = 'none'; document.getElementById('activeControls').style.display = 'grid'; runPrep(); }
+        function runPrep() { inPrep = true; let p = 10; document.getElementById('status').innerText = 'PREPARE'; document.getElementById('status').style.color = 'var(--orange)'; timer = setInterval(() => { document.getElementById('display').innerText = String(p).padStart(2, '0'); if (p <= 3 && p > 0) beep(440, 0.15); if (p <= 0) { beep(880, 0.6); clearInterval(timer); inPrep = false; runLogic(); } p--; }, 1000); }
+        function runLogic() { isRunning = true; updateDynamicUI(); updateDisplay(timeLeft); updateRoundsUI(); timer = setInterval(() => { if (mode === 'fortime') { timeLeft++; updateDisplay(timeLeft); if (workSecs > 0 && workSecs - timeLeft <= 3 && workSecs - timeLeft > 0) beep(440, 0.15); if (workSecs > 0 && timeLeft >= workSecs) { finish(); return; } } else { if (timeLeft > 0) { timeLeft--; updateDisplay(timeLeft); if (timeLeft === 0) { let isLastOne = false; if (mode === 'amrap') isLastOne = true; else if (mode === 'emom' && currentR >= totalR) isLastOne = true; else if (mode === 'tabata' && !isWork && currentR >= totalR) isLastOne = true; if (isLastOne) { finish(); return; } else { beep(880, 0.6); } } else if (timeLeft <= 3) { beep(440, 0.15); } } else { handleEnd(); updateDisplay(timeLeft); } } updateRoundsUI(); }, 1000); }
+        function updateDynamicUI() { const st = document.getElementById('status'); if (mode === 'tabata') { if (isWork) { st.innerText = 'WORK'; st.style.color = 'var(--green)'; } else { st.innerText = 'REST'; st.style.color = 'var(--pink)'; } } else { st.innerText = 'RUNNING'; st.style.color = 'var(--blue)'; } }
+        function handleEnd() { let isLastOne = false; if (mode === 'emom') { if (currentR >= totalR) isLastOne = true; } else if (mode === 'tabata') { if (!isWork && currentR >= totalR) isLastOne = true; } else if (mode === 'amrap' || mode === 'fortime') { isLastOne = true; } if (isLastOne) { finish(); } else { if (mode === 'emom') { currentR++; timeLeft = workSecs; } else if (mode === 'tabata') { if (isWork) { isWork = false; timeLeft = restSecs; } else { currentR++; isWork = true; timeLeft = workSecs; } } updateDynamicUI(); updateRoundsUI(); updateDisplay(timeLeft); } }
+        function updateRoundsUI() { if (mode === 'emom' || mode === 'tabata') document.getElementById('rounds').innerText = `ROUND ${currentR}/${totalR}`; else document.getElementById('rounds').innerText = mode.toUpperCase(); }
+        function finish() { clearInterval(timer); isRunning = false; document.getElementById('status').innerText = 'DONE'; document.getElementById('status').style.color = 'var(--blue)'; beep(880, 0.2); setTimeout(() => beep(880, 0.2), 300); setTimeout(() => beep(880, 0.6), 600); releaseWakeLock(); }
+        function togglePause() { if (inPrep) return; if (isRunning) { clearInterval(timer); isRunning = false; document.getElementById('status').innerText = 'PAUSED'; releaseWakeLock(); } else { requestWakeLock(); runLogic(); } }
+        function reset() { clearInterval(timer); isRunning = false; inPrep = false; document.getElementById('startBtn').style.display = 'block'; document.getElementById('activeControls').style.display = 'none'; document.getElementById('status').innerText = 'READY'; document.getElementById('status').style.color = 'var(--pink)'; if (mode === 'amrap') updateDisplay(amrapSecs); else updateDisplay(0); releaseWakeLock(); }
+        document.addEventListener('visibilitychange', async () => { if (wakeLock !== null && document.visibilityState === 'visible') { requestWakeLock(); } });
+        generateAmrapPicker(); updateDisplay(amrapSecs);
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+
+</html>
