@@ -834,8 +834,7 @@
                             type="number" id="repsRM" placeholder="es. 5"></div>
                 </div>
                 <button class="btn btn-green" onclick="calculate1RM()">CALCOLA 1RM</button>
-                <div id="resultRM"
-                    style="margin-top: 15px; text-align: center; display: none; padding: 10px; background: var(--bg); border: 1px solid var(--green); border-radius: 8px;">
+                <div id="resultRM" style="margin-top: 15px; text-align: center; display: none; padding: 10px; background: var(--bg); border: 1px solid var(--green); border-radius: 8px;">
                     <span id="labelRM"
                         style="font-size: 0.8em; color: var(--text-light); text-transform: uppercase;"></span><br>
                     <strong id="valueRM" style="font-size: 1.8em; color: var(--green);">--</strong> <span
@@ -858,17 +857,15 @@
                 <h3 style="color: var(--blue); margin-bottom:15px; font-size: 0.9em; text-transform: uppercase; font-weight:bold;">
                     Registro Massimali</h3>
             
-                <div style="display: flex; gap: 15px; margin-bottom: 15px; width: 100%;">
-                    <div style="flex: 1; min-width: 0;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
                         <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block; margin-bottom: 4px;">DA:</label>
-                        <input type="date" id="statsDateFrom" onchange="initStatsListener()"
-                            style="width: 100% !important; box-sizing: border-box !important; padding: 8px; font-size: 0.85em; min-width: 0;">
+                        <input type="date" id="statsDateFrom" onchange="initStatsListener()" style="width: 100% !important; box-sizing: border-box !important; padding: 8px; font-size: 0.85em; min-width: 0;">
                     </div>
                 
-                    <div style="flex: 1; min-width: 0;">
+                    <div>
                         <label style="font-size: 0.7em; color: var(--text-light); font-weight:bold; display: block; margin-bottom: 4px;">A:</label>
-                        <input type="date" id="statsDateTo" onchange="initStatsListener()"
-                            style="width: 100% !important; box-sizing: border-box !important; padding: 8px; font-size: 0.85em; min-width: 0;">
+                        <input type="date" id="statsDateTo" onchange="initStatsListener()" style="width: 100% !important; box-sizing: border-box !important; padding: 8px; font-size: 0.85em; min-width: 0;">
                     </div>
                 </div>
             
