@@ -514,7 +514,7 @@
                         <line x1="3" y1="18" x2="21" y2="18"></line>
                     </svg>
                 </button>
-                <h1 class="font-black text-lg tracking-tighter" style="color: var(--blue);">CROSSFIT DIARY</h1>
+                <h1 class="font-black text-lg tracking-tighter" style="color: var(--blue);">CF PRO</h1>
             </div>
 
             <button onclick="toggleTheme()" class="p-2" style="color: var(--text-light);">
@@ -530,7 +530,7 @@
                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                 </svg>
-                PROGRAMMA
+                PROG.
             </div>
             <div onclick="showPage('log-page', this)" class="nav-item">
                 <svg class="icon-nav" viewBox="0 0 24 24">
@@ -1126,7 +1126,7 @@
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
 
-                oscillator.type = 'sine'; // il tipo di suono (classico beep)
+                oscillator.type = 'square'; // il tipo di suono (classico beep)
                 oscillator.frequency.value = freq;
 
                 // Colleghiamo i vari pezzi per far uscire il suono
@@ -1137,7 +1137,6 @@
 
                 // Abbassiamo il volume dolcemente alla fine per evitare un fastidioso rumore metallico
                 gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
 
                 oscillator.stop(audioCtx.currentTime + duration);
             }
@@ -1172,12 +1171,116 @@
             runPrep();
         }
         
-        function runPrep() { inPrep = true; let p = 10; document.getElementById('status').innerText = 'PREPARE'; document.getElementById('status').style.color = 'var(--orange)'; timer = setInterval(() => { document.getElementById('display').innerText = String(p).padStart(2, '0'); if (p <= 3 && p > 0) beep(440, 0.15); if (p <= 0) { beep(880, 5); clearInterval(timer); inPrep = false; runLogic(); } p--; }, 1000); }        function runLogic() { isRunning = true; updateDynamicUI(); updateDisplay(timeLeft); updateRoundsUI(); timer = setInterval(() => { if (mode === 'fortime') { timeLeft++; updateDisplay(timeLeft); if (workSecs > 0 && workSecs - timeLeft <= 3 && workSecs - timeLeft > 0) beep(440, 0.15); if (workSecs > 0 && timeLeft >= workSecs) { finish(); return; } } else { if (timeLeft > 0) { timeLeft--; updateDisplay(timeLeft); if (timeLeft === 0) { let isLastOne = false; if (mode === 'amrap') isLastOne = true; else if (mode === 'emom' && currentR >= totalR) isLastOne = true; else if (mode === 'tabata' && !isWork && currentR >= totalR) isLastOne = true; if (isLastOne) { finish(); return; } else { beep(880, 0.6); } } else if (timeLeft <= 3) { beep(440, 0.15); } } else { handleEnd(); updateDisplay(timeLeft); } } updateRoundsUI(); }, 1000); }
+        function runLogic() {
+                isRunning = true;
+                timer = setInterval(() => {
+                    if (mode === 'fortime') {
+                        timeLeft++;
+                        updateDisplay(timeLeft);
+                    } else {
+                        timeLeft--;
+                        updateDisplay(timeLeft);
+
+                        // --- AGGIUNTA: Beep corto per i 3, 2, 1 secondi rimasti ---
+                        if (timeLeft <= 3 && timeLeft > 0) {
+                            beep(440, 0.15);
+                        }
+                        // ---------------------------------------------------------
+
+                        if (timeLeft <= 0) {
+                            if (mode === 'amrap') {
+                                finish();
+                            } else if (mode === 'emom') {
+                                currentR++;
+                                if (currentR > totalR) {
+                                    finish();
+                                } else {
+                                    beep(880, 0.7);
+                                    timeLeft = workSecs;
+                                    updateDisplay(timeLeft);
+                                }
+                            } else if (mode === 'tabata') {
+                                if (isWork) {
+                                    isWork = false;
+                                    timeLeft = restSecs;
+                                    document.getElementById('status').innerText = 'REST';
+                                    document.getElementById('status').style.color = 'var(--green)';
+                                    beep(440, 0.7);
+                                } else {
+                                    // --- PASSA A WORK ---
+                                    currentR++;
+                                    if (currentR > totalR) {
+                                        finish();
+                                    } else {
+                                        isWork = true;
+                                        timeLeft = workSecs;
+                                        document.getElementById('status').innerText = 'WORK';
+                                        document.getElementById('status').style.color = 'var(--blue)';
+                                        beep(880, 0.7);
+                                    }
+                                }
+                                updateDisplay(timeLeft);
+                            }
+                        }
+                    }
+                }, 1000);
+            }
+
+        function runPrep() {
+                inPrep = true;
+                let p = 10;
+                document.getElementById('status').innerText = 'PREPARE';
+                document.getElementById('status').style.color = 'var(--orange)';
+                timer = setInterval(() => {
+                    document.getElementById('display').innerText = String(p).padStart(2, '0');
+
+                    // Segnale acustico per il conto alla rovescia (3, 2, 1)
+                    if (p <= 3 && p > 0) beep(440, 0.15);
+
+                    if (p <= 0) {
+                        beep(880, 0.7);
+                        clearInterval(timer);
+                        inPrep = false;
+                        // Questo comando cambia il testo per tutte le modalità:
+                        // Se è Tabata scrive WORK, per tutte le altre scrive RUNNING
+                        document.getElementById('status').innerText = (mode === 'tabata') ? 'WORK' : 'RUNNING';
+                        document.getElementById('status').style.color = 'var(--blue)';
+                        runLogic();
+                    }
+                    p--;
+                }, 1000);
+            }
+        
         function updateDynamicUI() { const st = document.getElementById('status'); if (mode === 'tabata') { if (isWork) { st.innerText = 'WORK'; st.style.color = 'var(--green)'; } else { st.innerText = 'REST'; st.style.color = 'var(--pink)'; } } else { st.innerText = 'RUNNING'; st.style.color = 'var(--blue)'; } }
         function handleEnd() { let isLastOne = false; if (mode === 'emom') { if (currentR >= totalR) isLastOne = true; } else if (mode === 'tabata') { if (!isWork && currentR >= totalR) isLastOne = true; } else if (mode === 'amrap' || mode === 'fortime') { isLastOne = true; } if (isLastOne) { finish(); } else { if (mode === 'emom') { currentR++; timeLeft = workSecs; } else if (mode === 'tabata') { if (isWork) { isWork = false; timeLeft = restSecs; } else { currentR++; isWork = true; timeLeft = workSecs; } } updateDynamicUI(); updateRoundsUI(); updateDisplay(timeLeft); } }
         function updateRoundsUI() { if (mode === 'emom' || mode === 'tabata') document.getElementById('rounds').innerText = `ROUND ${currentR}/${totalR}`; else document.getElementById('rounds').innerText = mode.toUpperCase(); }
-        function finish() { clearInterval(timer); isRunning = false; document.getElementById('status').innerText = 'DONE'; document.getElementById('status').style.color = 'var(--blue)'; beep(880, 0.2); setTimeout(() => beep(880, 0.2), 300); setTimeout(() => beep(880, 2.0), 600); releaseWakeLock(); }        function togglePause() { if (inPrep) return; if (isRunning) { clearInterval(timer); isRunning = false; document.getElementById('status').innerText = 'PAUSED'; releaseWakeLock(); } else { requestWakeLock(); runLogic(); } }
-        function reset() { clearInterval(timer); isRunning = false; inPrep = false; document.getElementById('startBtn').style.display = 'block'; document.getElementById('activeControls').style.display = 'none'; document.getElementById('status').innerText = 'READY'; document.getElementById('status').style.color = 'var(--pink)'; if (mode === 'amrap') updateDisplay(amrapSecs); else updateDisplay(0); releaseWakeLock(); }
+        
+        function finish() {
+            clearInterval(timer);
+            isRunning = false;
+            document.getElementById('status').innerText = 'DONE';
+            document.getElementById('status').style.color = 'var(--blue)';
+
+            // Esegue il beep tre volte
+            beep(880, 0.5);
+            setTimeout(() => beep(880, 0.5), 1200);
+            setTimeout(() => beep(880, 1.4), 2400);
+
+            releaseWakeLock();
+        }
+
+        function reset() {
+            clearInterval(timer);
+            isRunning = false;
+            inPrep = false;
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('activeControls').style.display = 'none';
+            document.getElementById('status').innerText = 'READY';
+            document.getElementById('status').style.color = 'var(--pink)';
+            if (mode === 'amrap') updateDisplay(amrapSecs); else updateDisplay(0);
+            releaseWakeLock();
+        }
+
         document.addEventListener('visibilitychange', async () => { if (wakeLock !== null && document.visibilityState === 'visible') { requestWakeLock(); } });
         generateAmrapPicker(); updateDisplay(amrapSecs);
     </script>
@@ -1189,4 +1292,3 @@
 </body>
 
 </html>
-
